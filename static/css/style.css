@@ -1,0 +1,194 @@
+	
+@charset "utf-8";
+<?php header('Content-type: text/css'); ?>
+
+
+/* General Resets */
+body {
+	font:12px/1.75em Verdana, Arial, sans-serif;
+	background-color:#e8e8e8;
+}
+#global_container {
+	background-color: #e8e8e8;
+}
+h2 {
+	margin:0 0 .5em;
+	font:24px/1em  'Opensans-bold';
+}
+h3 {
+	margin:0 0 1em;
+	padding:0 0 .25em;
+	font:18px 'Opensans-bold';
+	text-transform:none;
+	border-bottom:1px solid #e3e3e3;
+}	
+input::-ms-clear {
+	display: none;  /*remove the 'x' clear button from ie browsers */
+}
+
+.button {
+	display: inline-block;
+	cursor:pointer;
+	border-radius:4px;
+}
+
+.toolbox {
+	margin-bottom:1em;
+	padding: 2em 2.5em;
+	background-color: #f8f8f8;
+}
+.toolbox .log {
+	margin-top:1.25em;
+	color:#aaa;
+}
+.toolbox.first 
+	{margin-right:3%;
+}
+
+/* Group selectors for protocol, environment etc */
+.controls>.button {
+	margin-right: .35em;
+	padding:.2em 1em;
+	font-family:'Opensans-bold', Arial, Helvetica, sans-serif;
+	font-size:14px;
+	color:#8b8b8b;
+	background-color: #e3e3e3;
+	border:2px solid #e3e3e3;
+}
+.controls>.button:hover{
+	color:#fff;
+	border-color:#000;
+	background-color: #000;
+}
+.controls>.button.current {
+	color:#3b9ffb;
+	border-color:#3b9ffb;
+	background-color: #fff;
+}
+
+/* Query parameters */
+#params > li{
+	position: relative;
+	margin-bottom: .75em;
+	cursor:pointer;
+}
+
+#params > li label,
+#params > li input{
+	display: inline-block;
+	height:32px;
+	padding:0 .25em 0 .75em;
+	font:14px/32px 'Opensans-semibold';
+	color:#000;
+	border:1px solid #bfbfbf;
+	cursor: default;
+}
+
+#params > li label {
+	width:35%;
+	position: relative;
+	margin-right: 25px;
+	text-transform: none;
+	font-family:'Opensans-bold';
+	color:#0084ff;
+	border:none;
+	background-color: #dedede;
+}
+#params > li input { 
+	width: 49%;
+}
+
+#params > li label:after {
+	display: block;
+	position: absolute;
+	content:"=";
+	right:-18px;
+	top:0;
+	color:#d2d2d2;
+}
+#params > li input:focus {
+	border-color:#000;
+	box-shadow:0 0 6px 0 #bbb;
+	outline:none;
+}
+
+#params > li.editing input {
+	color:gray;
+	box-shadow:0 0 6px 0 #bbb;
+	border:1px solid black;
+}
+
+#params .eq {
+	float:left;
+	margin:0 .75em;
+	color:#d2d2d2;
+}
+#params .remove {float:right;
+	padding:0 .75em;
+	height:30px;
+	line-height:28px;
+	color:#909090;
+	border-radius:4px;
+	border:1px solid #dadada;
+}
+#params .remove:hover {color:#777;
+	background-color: #eee;
+	border-color:#aaa;
+}
+
+
+/* GENERATED URL Styles */
+.urlbox {
+	position: relative;
+} 
+.urlbox .toolbox{
+	margin-bottom:0;
+}
+.url a {
+	display: block;
+	padding:0;
+	position: relative;
+	font:21px 'Opensans-semibold';
+	text-decoration: none;
+	word-break:break-all;
+}
+
+/* Url param syntax styling */
+.url .part {
+	color:black;
+}
+.url .param {
+	color:#309afc;
+}
+.url .sep {
+	color:#bebebe;
+}
+.url .eq {
+	color:#94A6B6;
+}
+
+
+.url-options {
+	margin:0 auto 2em;
+ }
+.url-options .url-go{
+	display: block;
+	padding:.75em 0;
+	color:#000;
+	font-family:'Opensans-bold';
+	font-size:17px;
+	font-weight:normal!important;
+	text-align:center;
+	text-decoration:none;
+	background-color: #0084FF;
+	border-radius:2px;
+}
+.url-options .url-go:hover {
+	background-color:#000;
+	color:#fff;
+}
+.url-options .url-copy {
+	position: absolute;
+	 top:-30px;
+	 right:0;
+}

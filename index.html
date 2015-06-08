@@ -1,0 +1,109 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Tester: TR</title>
+	
+	<link rel="stylesheet" href="http://assets.fxcm.com/css/global.css">
+	<link rel="stylesheet" href="static/css/style.css">
+	<link rel="stylesheet" href="static/vendor/jquery.autocomplete/jquery.autocomplete.css">
+	<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+</head>
+<body>
+	<div id="global_container">
+		<div class="rowGroup  mainContent" id="mc">
+			<section class="row  pattern-C">
+				<div class="row-inner">
+					<article class="C">
+						<h1 class="margin-bottom">TR tester</h1>
+						<div class="urlbox">
+							<section class="toolbox">
+								<div class="url"></div>
+							</section>								
+							<div class="url-options">
+								<a class="url-go" href="#" target="_blank">Go to URL <i class="fa fa-external-link"></i></a>
+								<a class="url-copy" href="#">Copy URL to clipboard <i class="fa fa-copy"></i></a>
+							</div>
+						</div>						
+						<div class="contains-3">
+							<div class="unit size2of3">
+								<section class="toolbox first">
+									<h3>Query parameters</h3>
+									<form name="tr-tester">
+										<ul class="controls" id="params">
+											<li data-value="rb" class="required">
+												<label>rb</label> <input type="text" value="fxcm" data-value="rb">
+											</li>
+											<li data-value="application_type">
+												<label>application_type</label> 
+												<input data-autocomplete data-category="application_type" type="text">												
+											</li>										
+											<li data-value="ccy">
+												<label>ccy</label> 
+												<input data-autocomplete type="text" data-category="ccy">
+											</li>
+											<li data-value="country">
+												<label>country</label> 
+												<input data-autocomplete type="text" data-value="country">
+											</li>
+											<li data-value="execution">
+												<label>execution</label> 
+												<input data-autocomplete type="text" data-category="execution">
+											</li>
+											<li data-value="locale" class="required">
+												<label>locale</label> 
+												<input data-autocomplete type="text" data-category="locale">
+											</li>
+											<li data-value="platform" class="required">
+												<label>platform</label> 
+												<input data-autocomplete type="text" data-category="platform">
+											</li>
+											<li data-value="product" class="required">
+												<label>product</label> 
+												<input data-autocomplete type="text" data-category="product">
+											</li>
+											<li data-value="service_level" class="required">
+												<label>service_level</label> 
+												<input data-autocomplete type="text" data-category="service_level">
+											</li>
+										</ul>
+									</form>
+									<p>Note: Parameters will only be added to URL if there is a value set.</p>
+								</section>								
+							</div>
+							<div class="unit size1of3">
+								<!-- <h2>Options:</h2> -->
+								<section class="toolbox contains-3 has-gutter gutter-md">
+									<h3>Protocol</h3>
+									<ul class="controls" id="protocol">
+										<li class="button" data-value="http">http</li>
+										<li class="button" data-value="https">https</li>
+									</ul>
+								</section>
+								<section class="toolbox">
+									<h3>Environment</h3>
+									<ul class="controls" id="environment">
+										<li class="button" data-value="qa">qa</li>
+										<li class="button" data-value="uat">uat</li>
+										<li class="button" data-value="prod">prod</li>
+									</ul>
+									<div class="log">URL: <span class="txt">secure4.fxcorporate.com/tr/</span></div>
+								</section>
+								<section class="toolbox">
+									<h3>Tracking</h3>
+									<input type="checkbox" name="tracking" id="tracking"> Add pseudo tracking param
+								</section>
+
+							</div>
+						</div>
+					</article>
+				</div>
+			</section>
+		</div>
+	</div>
+	<script src="//static.fxcm.co.uk/script/fxcm_lib.js?package=fxcm3.1"></script>
+	<script src="static/vendor/jquery.autocomplete/jquery.autocomplete.js"></script>
+	<script type="text/javascript" src="static/script/script.js"></script>
+</body>
+</html>

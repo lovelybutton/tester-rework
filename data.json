@@ -1,0 +1,7 @@
+{
+
+	'application_type': ['corporate','ira','trust','partnership','llc','individual','joint'],
+	'ccy': ['aud','cad','chf','eur','gbp','hkd','jpy','nzd','usd'],
+	'country': ['afghanistan','albania','algeria','american_samoa','andorra','angola','anguilla','antigua_and_barbuda','argentina','armenia','aruba','austria','australia','azerbaijan']
+
+}
