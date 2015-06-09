@@ -1,4 +1,4 @@
-	
+
 @charset "utf-8";
 <?php header('Content-type: text/css'); ?>
 
@@ -21,7 +21,7 @@ h3 {
 	font:18px 'Opensans-bold';
 	text-transform:none;
 	border-bottom:1px solid #e3e3e3;
-}	
+}
 input::-ms-clear {
 	display: none;  /*remove the 'x' clear button from ie browsers */
 }
@@ -41,7 +41,7 @@ input::-ms-clear {
 	margin-top:1.25em;
 	color:#aaa;
 }
-.toolbox.first 
+.toolbox.first
 	{margin-right:3%;
 }
 
@@ -67,14 +67,14 @@ input::-ms-clear {
 }
 
 /* Query parameters */
-#params > li{
+#query_params > li{
 	position: relative;
 	margin-bottom: .75em;
 	cursor:pointer;
 }
 
-#params > li label,
-#params > li input{
+#query_params > li label,
+#query_params > li input{
 	display: inline-block;
 	height:32px;
 	padding:0 .25em 0 .75em;
@@ -84,7 +84,7 @@ input::-ms-clear {
 	cursor: default;
 }
 
-#params > li label {
+#query_params > li label {
 	width:35%;
 	position: relative;
 	margin-right: 25px;
@@ -94,11 +94,11 @@ input::-ms-clear {
 	border:none;
 	background-color: #dedede;
 }
-#params > li input { 
+#query_params > li input {
 	width: 49%;
 }
 
-#params > li label:after {
+#query_params > li label:after {
 	display: block;
 	position: absolute;
 	content:"=";
@@ -106,24 +106,24 @@ input::-ms-clear {
 	top:0;
 	color:#d2d2d2;
 }
-#params > li input:focus {
+#query_params > li input:focus {
 	border-color:#000;
 	box-shadow:0 0 6px 0 #bbb;
 	outline:none;
 }
 
-#params > li.editing input {
+#query_params > li.editing input {
 	color:gray;
 	box-shadow:0 0 6px 0 #bbb;
 	border:1px solid black;
 }
 
-#params .eq {
+#query_params .eq {
 	float:left;
 	margin:0 .75em;
 	color:#d2d2d2;
 }
-#params .remove {float:right;
+#query_params .remove {float:right;
 	padding:0 .75em;
 	height:30px;
 	line-height:28px;
@@ -131,7 +131,7 @@ input::-ms-clear {
 	border-radius:4px;
 	border:1px solid #dadada;
 }
-#params .remove:hover {color:#777;
+#query_params .remove:hover {color:#777;
 	background-color: #eee;
 	border-color:#aaa;
 }
@@ -140,11 +140,11 @@ input::-ms-clear {
 /* GENERATED URL Styles */
 .urlbox {
 	position: relative;
-} 
+}
 .urlbox .toolbox{
 	margin-bottom:0;
 }
-.url a {
+#generated_url a {
 	display: block;
 	padding:0;
 	position: relative;
@@ -154,16 +154,16 @@ input::-ms-clear {
 }
 
 /* Url param syntax styling */
-.url .part {
+#generated_url .part {
 	color:black;
 }
-.url .param {
+#generated_url .param {
 	color:#309afc;
 }
-.url .sep {
+#generated_url .sep {
 	color:#bebebe;
 }
-.url .eq {
+#generated_url .eq {
 	color:#94A6B6;
 }
 
