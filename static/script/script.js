@@ -7,75 +7,109 @@ $(function(){
 		},
 		crossBrowserEventObj: function(){
 
+		},
+		highlightSelected: function( item ){
+			var item = $(item);		
+			item.siblings(item.tag).andSelf().removeClass( 'current' );			
+			item.addClass( 'current' );
 		}
+
 	};
 
-	var all_data = {
+	var full_dataSet = {
 		query_params : {
-			'application_type': ['corporate','ira','trust','partnership','llc','individual','joint'],
-			'ccy': ['aud','cad','chf','eur','gbp','hkd','jpy','nzd','usd'],
-			'country': ['afghanistan','albania','algeria','american_samoa'],
-			'rb': ['fxcm', 'mt4'],
-			'execution': ['dealing_desk', 'no_dealing_desk'],
-			'locale': ['ar_AE', 'de_DE'],
-			'platform': ['mt4', 'trading_station', 'active_trader'],
-			'product': ['spread_bet', 'fx'],
-			'service_level': ['1', '2', '3', '4']
+			application_type: ['corporate','ira','trust','partnership','llc','individual','joint'],
+			ccy: ['aud','cad','chf','eur','gbp','hkd','jpy','nzd','usd'],
+			country: ['afghanistan','albania','algeria','american_samoa'],
+			rb: ['fxcm', 'mt4'],
+			execution: ['dealing_desk', 'no_dealing_desk'],
+			locale: ['ar_AE', 'de_DE'],
+			platform: ['mt4', 'trading_station', 'active_trader'],
+			product: ['spread_bet', 'fx'],
+			service_level: ['1', '2', '3', '4']
 		},
 		url_settings : {
 			'environment': {
-				'qa': ["http://qa"],
-				'uat': ["http://uat"],
-				'prod': ["http://prod"]
+				qa:	'secure9x.fxcorporate.com/tr',
+				uat: 'secure9z.fxcorporate.com/tr',
+				prod: 'secure4.fxcorporate.com/tr'
 			},
 			'protocol': {
-				'https': ['https'],
-				'http': ['http']
+				https: 'https',
+				http: 'http'
 			}
 		}
 	};
 
-	var selected_data = {
-		query_params: {
-			rb: 'hello',
-			area: 'goodbye',
-			product: 'something'
-		},
-		url_settings: {
-			environment: 'qa',
-			protocol: 'http'
-		}
-	};
+	var active_data = (function(){
+		var data = {
+			query_params: {
+				rb: 'hello',
+				product: 'something'
+			},
+			url_settings: {
+				environment: 'secure9z.fxcorporate.com/tr',
+				protocol: 'http'
+			}
+		};
 
-	var url = {
-		$el: $('#generated_url'),
-		render: function( text ){
-			console.log('rendering the url');
-			url.$el.text( text );
-		},
-		init: function(){
-			url.render();
+		function getOne( category, key) {
+			return data && data[category] && data[category][key] || false;
 		}
-	};
+
+		function getCategory( category, key) {
+			return data && data[category] || false;
+		}
+
+		function getAll() {
+			return data;
+		}
+
+		function setValue( category, key, value) {
+			if (value === '') {
+				delete data[category][key];
+			} else {
+				data[category][key] = value;
+			}
+		}
+
+		return {
+			getOne: getOne,
+			getCategory: getCategory,
+			getAll: getAll,
+			set: setValue
+		};		
+	}());
 
 	var url_settings = {
-		$el: $('#url_settings').find('.button'),
-		template: '',
-
-		select: function(){
-			console.log('selecting');
-		},
+		$el: $('#url_settings'),
 
 		bind: function(){
-			console.log('binding');
-			url_settings.$el.each(function(){
-				$(this).on('click', url_settings.select);
+			url_settings.$el.on('click', '.button', function(){
+				url_settings.onSelect( this );
 			});
-
 		},
+		
+		onSelect: function( element ){
+			var category = $(element).attr('data-category');
+			var value = $(element).attr('data-value');
 
+			util.highlightSelected( element);
+			active_data.set( 'url_settings', category, value );
+			url.render();
+		},
+		
 		init: function(){
 			url_settings.bind();
+
+			var settings = active_data.getCategory('url_settings');
+
+			_.each( settings, function(value, category){				
+				var el = url_settings.$el.find('.button[data-value="'+ value +'"]');
+
+				util.highlightSelected( el );
+			});
+
 		}
 
 	};
@@ -85,51 +119,70 @@ $(function(){
 		template: _.template('<li><label><%= category %></label> <input type="text" data-category="<%= category %>" value="<%= value %>" /></li>'),
 
 		renderAll: function( data, selected ){
-			// render all categories
 			var items = '';
 
-			_.each( data, function(value, category, obj){
-				// check if we have a preselected value passed for this category. If not, value should be empty
-				var finalValue = _.has( selected, category) ? selected[category] : '';
-	
+			// render all items and set values if provided
+			_.each( data, function(value, category, obj){				
+				var finalValue = '';
+				
+				// check if we have a preselected value or not			
+				if ( _.has( selected, category ) ) {
+					finalValue = selected[category];
+				} 
+
+				// append newly-prepared item to set
 				items += query_params.template({category: category, value: finalValue });
 			});
 
-			query_params.bind( items );
 			query_params.$el.append( items );
-
-		},
-
-		
-		setValue: function( category, value ){
-			console.log("setting " + category + "with the value of: " + value);
 		},
 
 		onUpdate: function( element ){
 			element = $(element) || $('div');
 			var category = element.attr('data-category');
 			var value = element.val();
+			var data = active_data.getCategory( query_params );
 
-			url.render( category + '=' + value );
+			// update selected data according to new value
+			active_data.set('query_params', category, value);
+
+			url.render();
 		},
 
-		bind: function( elementSet ){
+		bind: function(){
 			query_params.$el.on('keyup', 'input', function(){
 				query_params.onUpdate( this );
 			});
-
-			// $(elementSet).each(function(){
-			// 	var el = $(this);
-			// 	el.live('keyup', function(){
-
-			// 	});
-			// });
 		},
 
-		init: function( all_data, selected ){
+		init: function( full_dataSet, selected ){
+			query_params.renderAll( full_dataSet, selected );
+			query_params.bind();			
+		}
+	};
 
-			query_params.renderAll( all_data, selected );
-			
+	var url = {
+		$el: $('#generated_url'),
+
+		generate: function(  ){
+			var generated = [];
+			var protocol = active_data.getOne( 'url_settings', 'protocol' ) + '://';
+			var environment = active_data.getOne( 'url_settings', 'environment' );
+			var params = active_data.getCategory( 'query_params' );
+
+			generated.push( protocol );
+			generated.push( environment );
+			generated.push( '?' + $.param( params ) ); 
+			return generated.join('');
+		},
+
+		render: function( ){
+			var newURL = url.generate();
+			url.$el.text( newURL );
+		},
+
+		init: function(){
+			url.render();
 		}
 	};
 
@@ -180,8 +233,8 @@ $(function(){
 	// };
 
 	// Setup
-	query_params.init( all_data.query_params, selected_data.query_params );
-	// url_settings.init();
-	// url.init( data.url_settings );
+	query_params.init( full_dataSet.query_params, active_data.getCategory( 'query_params' ) );
+	url_settings.init();
+	url.init();
 
 });

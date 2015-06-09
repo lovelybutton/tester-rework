@@ -31,44 +31,7 @@
 								<section class="toolbox first">
 									<h3>Query parameters</h3>
 									<form name="tr-tester">
-										<ul id="query_params">
-											<!-- <li>
-												<label>rb</label> 
-												<input type="text" value="fxcm" data-value="rb">
-											</li>
-											<li>
-												<label>application_type</label>
-												<input data-category="application_type" type="text">
-											</li>
-											<li>
-												<label>ccy</label>
-												<input type="text" data-category="ccy">
-											</li>
-											<li>
-												<label>country</label>
-												<input type="text" data-category="country">
-											</li>
-											<li>
-												<label>execution</label>
-												<input type="text" data-category="execution">
-											</li>
-											<li>
-												<label>locale</label>
-												<input type="text" data-category="locale">
-											</li>
-											<li>
-												<label>platform</label>
-												<input type="text" data-category="platform">
-											</li>
-											<li>
-												<label>product</label>
-												<input type="text" data-category="product">
-											</li>
-											<li>
-												<label>service_level</label>
-												<input type="text" data-category="service_level">
-											</li> -->
-										</ul>
+										<ul id="query_params"></ul>
 									</form>
 									<p>Note: Parameters will only be added to URL if there is a value set.</p>
 								</section>
@@ -78,16 +41,16 @@
 								<section class="toolbox contains-3 has-gutter gutter-md">
 									<h3>Protocol</h3>
 									<ul class="controls" id="protocol">
-										<li class="button" data-value="http">http</li>
-										<li class="button" data-value="https">https</li>
+										<li class="button" data-category="protocol" data-value="http">http</li>
+										<li class="button" data-category="protocol" data-value="https">https</li>
 									</ul>
 								</section>
 								<section class="toolbox">
 									<h3>Environment</h3>
 									<ul class="controls" id="environment">
-										<li class="button" data-value="qa">qa</li>
-										<li class="button" data-value="uat">uat</li>
-										<li class="button" data-value="prod">prod</li>
+										<li class="button" data-category="environment" data-value="secure9x.fxcorporate.com/tr">qa</li>
+										<li class="button" data-category="environment" data-value="secure9z.fxcorporate.com/tr">uat</li>
+										<li class="button" data-category="environment" data-value="secure4.fxcorporate.com/tr">prod</li>
 									</ul>
 									<div class="log">URL: <span class="txt">secure4.fxcorporate.com/tr/</span></div>
 								</section>
