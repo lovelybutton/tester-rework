@@ -142,14 +142,14 @@ input::-ms-clear {
 	position: relative;
 }
 .urlbox .toolbox{
-	margin-bottom:0;
+	/*margin-bottom:0;*/
 }
 #generated_url a {
 	display: block;
 	padding:0;
 	position: relative;
 	font:21px 'Opensans-semibold';
-	text-decoration: none;
+	/*text-decoration: none;*/
 	word-break:break-all;
 }
 
