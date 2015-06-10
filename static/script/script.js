@@ -60,7 +60,7 @@ $(function(){
 		}
 	};
 
-	var active_data = (function(){
+	var dataService = (function(){
 		var data = {
 			query_params: {
 				rb: 'hello',
@@ -114,14 +114,14 @@ $(function(){
 			var value = $(element).attr('data-value');
 
 			util.highlightSelected(element);
-			active_data.set('url_settings', category, value);
+			dataService.set('url_settings', category, value);
 			url.render();
 		},
 
 		init: function(){
 			url_settings.bind();
 
-			var settings = active_data.getCategory('url_settings');
+			var settings = dataService.getCategory('url_settings');
 
 			_.each( settings, function(value, category){
 				var el = url_settings.$el.find('.button[data-value="'+ value +'"]');
@@ -160,10 +160,10 @@ $(function(){
 			element = $(element) || $('div');
 			var category = element.attr('data-category');
 			var value = element.val();
-			var data = active_data.getCategory(query_params);
+			var data = dataService.getCategory(query_params);
 
 			// update selected data according to new value
-			active_data.set('query_params', category, value);
+			dataService.set('query_params', category, value);
 
 			url.render();
 		},
@@ -182,15 +182,14 @@ $(function(){
 		}
 	};
 
-
 	var url = {
 		$el: $('#generated_url'),
 
 		generate: function(){
 			var generated = {};
-			generated.protocol = active_data.getOne( 'url_settings', 'protocol' );
-			generated.environment = active_data.getOne( 'url_settings', 'environment' );
-			generated.query_params = active_data.getCategory( 'query_params' );
+			generated.protocol = dataService.getOne( 'url_settings', 'protocol' );
+			generated.environment = dataService.getOne( 'url_settings', 'environment' );
+			generated.query_params = dataService.getCategory( 'query_params' );
 
 			return generated;
 		},
@@ -219,7 +218,6 @@ $(function(){
 
 		render: function( ){
 			var parts = url.generate();
-
 			var newEl = $('<a href="' + parts.protocol + '://' + parts.environment + $.param(parts.query_params) + '">' + url.constructText(parts, true) + '</a>');
 
 			util.appendHTML(newEl, url.$el);
@@ -230,54 +228,8 @@ $(function(){
 		}
 	};
 
-	// var autocomplete = {
-	// 	$el: $('[data-autocomplete]'),
-	// 	template: $(),
-
-	// 	sourceCallback: function( term, suggest, category ){
-	// 		term = term.toLowerCase();
-	// 		var choices = data.query_params[category] || [];
-	// 		var suggestions = [];
-	// 		for ( var i = 0; i < choices.length; i++ ) {
-	// 			if ( choices[i].toLowerCase().indexOf(term) > -1 ) {
-	// 				suggestions.push(choices[i]);
-	// 			}
-	// 		}
-	// 		suggest(suggestions);
-	// 	},
-
-	// 	renderItemCallback: function (item, search, category){
-	// 		var category = category || "not defined";
-	// 		var re = new RegExp("(" + search.split(' ').join('|') + ")", "gi");
-	// 		return '<div class="autocomplete-suggestion" data-val="' + item + '">' + item.replace(re, "<b>$1</b>") + '</div>';
-	// 	},
-
-	// 	onSelectCallback: function( e, term, item){
-	// 		console.log('updating ' + item.attr('data-category') + '. New value is: ' + item.text() );
-	// 		url.render();
-	// 	},
-
-	// 	init: function(){
-	// 		// Automcomplete
-	// 		// http://goodies.pixabay.com/jquery/auto-complete/demo.html
-	// 		// Using the renderItem function to turn the autocomplete into a combo autocomplete with select menu functionality
-	// 		autocomplete.$el.each(function(){
-	// 			var category = $(this).attr('data-category');
-	// 			$(this).autoComplete({
-	// 				minChars: 0,
-	// 				delay:75,
-	// 				source: function( term, suggest ){
-	// 					autocomplete.sourceCallback( term, suggest, category);
-	// 				},
-	// 				renderItem: autocomplete.renderItemCallback,
-	// 				onSelect: autocomplete.onSelectCallback
-	// 			});
-	// 		});
-	// 	}
-	// };
-
 	// Setup
-	query_params.init( full_dataSet.query_params, active_data.getCategory('query_params') );
+	query_params.init( full_dataSet.query_params, dataService.getCategory('query_params') );
 	url_settings.init();
 	url.init();
 
