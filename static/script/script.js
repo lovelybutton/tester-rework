@@ -14,24 +14,6 @@ $(function(){
 			tag = tag || 'span';
 			className = className || '';
 			return '<' + tag + ' class="' + className + '">' + text + '</' + tag + '>';
-		},
-		serializeParams: function(params, pretty){
-			// Returns params either serialized as a valid query param string or wrapped in syntax spans for visual display
-			// pretty is a boolean value that when true, wraps the param parts in decorative spans
-			var serialized;
-			var part = '';
-
-			if (pretty) {
-				serialized = [];
-				for (var param in params){
-					part = util.wrapTag(param, 'param') + util.wrapTag('=', 'eq') + util.wrapTag(params[param], 'param');
-					serialized.push(part);
-				}
-				serialized = serialized.join(util.wrapTag('&', 'sep'));
-			} else {
-				serialized = $.param(params);
-			}
-			return serialized;
 		}
 	};
 
@@ -210,15 +192,34 @@ $(function(){
 			prettyText.push( util.wrapTag('?', 'sep') );
 
 			// query params
-			prettyText.push(util.serializeParams(params, pretty));
+			prettyText.push(url.serializeParams(params, pretty));
 
 			return prettyText.join("");
 
 		},
 
+		serializeParams: function(params, pretty){
+			// Returns params either serialized as a valid query param string or wrapped in syntax spans for visual display
+			// pretty is a boolean value that when true, wraps the param parts in decorative spans
+			var serialized;
+			var part = '';
+
+			if (pretty) {
+				serialized = [];
+				for (var param in params){
+					part = util.wrapTag(param, 'param') + util.wrapTag('=', 'eq') + util.wrapTag(params[param], 'param');
+					serialized.push(part);
+				}
+				serialized = serialized.join(util.wrapTag('&', 'sep'));
+			} else {
+				serialized = $.param(params);
+			}
+			return serialized;
+		},
+
 		render: function( ){
 			var parts = url.generate();
-			var newEl = $('<a href="' + parts.protocol + '://' + parts.environment + $.param(parts.query_params) + '">' + url.constructText(parts, true) + '</a>');
+			var newEl = $('<a href="' + parts.protocol + '://' + parts.environment + '/' + $.param(parts.query_params) + '">' + url.constructText(parts, true) + '</a>');
 
 			util.appendHTML(newEl, url.$el);
 		},

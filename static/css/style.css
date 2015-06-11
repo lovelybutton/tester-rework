@@ -314,15 +314,14 @@ body[data-theme="default-dark"] #generated_url a:hover {
 }
 
 /* Url param syntax styling */
-body[data-theme="default-dark"] #generated_url .part {
-	color:#832A71;
-}
-body[data-theme="default-dark"] #generated_url .param {
-	color:#02A856;
-}
-body[data-theme="default-dark"] #generated_url .sep {
-	color:#106666;
-}
-body[data-theme="default-dark"] #generated_url .eq {
-	color:#077124;
-}
+body[data-theme="default-dark"] #generated_url .part {color:#832A71;}
+body[data-theme="default-dark"] #generated_url a:hover .part {color:#982C82;}
+
+body[data-theme="default-dark"] #generated_url .param {color:#02A856;}
+body[data-theme="default-dark"] #generated_url a:hover .param {color:#03C565;}
+
+body[data-theme="default-dark"] #generated_url .sep {color:#106666;}
+body[data-theme="default-dark"] #generated_url .sep {color:#007474;}
+
+body[data-theme="default-dark"] #generated_url .eq {color:#077124;}
+body[data-theme="default-dark"] #generated_url .eq {color:#1A622E;}
