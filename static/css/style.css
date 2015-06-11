@@ -107,221 +107,110 @@ input::-ms-clear {
 	position: relative;
 }
 #generated_url a {
-	display: inline-block;
+	display: inline;
 	padding:0;
 	position: relative;
 	word-break:break-all;
+	font:21px 'Opensans-semibold';
+	text-decoration: none;
 }
 
-/*.url-options {
+.url-options {
 	margin:0 auto 2em;
  }
 .url-options .url-go{
 	display: block;
 	padding:.75em 0;
-	color:#000;
 	font-family:'Opensans-bold';
 	font-size:17px;
 	font-weight:normal!important;
 	text-align:center;
 	text-decoration:none;
-	background-color: #0084FF;
 	border-radius:2px;
-}
-.url-options .url-go:hover {
-	background-color:#000;
-	color:#fff;
 }
 .url-options .url-copy {
 	position: absolute;
 	 top:-30px;
 	 right:0;
-}*/
-
-
-
-/***************** SKINS ******************/
-/* ----- Light ----- */
-body[data-theme="default-light"] #global_container {
-	color:#222;
-	background-color: #e8e8e8;
 }
-
-body[data-theme="default-light"] h1{
-	color:#222;
-}
-body[data-theme="default-light"] h3 {
-	color:#222;
-	border-bottom-color: #e3e3e3;
-}
-body[data-theme="default-light"] .toolbox {
-	background-color: #f8f8f8;
-}
-body[data-theme="default-light"] .controls>.button {
-	color:#8b8b8b;
-	background-color: #e3e3e3;
-	border:2px solid #e3e3e3;
-}
-body[data-theme="default-light"] .controls>.button:hover{
+.url-options .url-copy.alerting:after {
+	content: "copied!";
+	position:absolute;
+	margin-left:10px;
 	color:#fff;
-	border-color:#000;
-	background-color: #000;
+	font-weight: normal;
+	padding:6px;
+	line-height: 1em;
+	border-radius: 6px;
+	background-color: rgba(255, 255, 255, 0.2);
 }
-body[data-theme="default-light"] .controls>.button.current {
-	color:#3b9ffb;
-	border-color:#3b9ffb;
-	background-color: #fff;
+.url-options .url-copy.alerting:before {
+	content:"";
+	position: absolute;
+	left:163px;
+	top:8px;
+	line-height:0;width:0;height:0;
+	border:5px solid transparent;
+	border-right-width:7px;
+	border-right-color:rgba(255, 255, 255, 0.2);
 }
+.url-copy.zeroclipboard-is-hover { text-decoration: none;}
+/*.url-copy.zeroclipboard-is-active { background-color: #aaa; }*/
 
-body[data-theme="default-light"] #query_params > li label {
-	color:#0084ff;
-	border:none;
-	background-color: #dedede;
-}
-body[data-theme="default-light"] #query_params > li input {
-	color:#000;
-	border:1px solid #bfbfbf;
-}
-body[data-theme="default-light"] #query_params > li label:after {
-	color:#d2d2d2;
-}
-body[data-theme="default-light"] #query_params > li input:focus {
-	border-color:#000;
-	box-shadow:0 0 6px 0 #bbb;
-}
-body[data-theme="default-light"] #query_params > li.editing input {
-	color:gray;
-	box-shadow:0 0 6px 0 #bbb;
-	border-color:black;
-}
-body[data-theme="default-light"] #query_params .eq {
-	color:#d2d2d2;
-}
-body[data-theme="default-light"] #query_params .delete {
-	color:#bebebe;
-}
-body[data-theme="default-light"] #query_params .delete:hover {
-	color:#FFF;
-	background-color: #E41F71;
-}
-body[data-theme="default-light"] #query_params .delete:active {
-	color:#777;
-	background-color: #eee;
-	border-color:#aaa;
-}
-
-body[data-theme="default-light"] #generated_url a {
-	font:21px 'Opensans-semibold';
-	text-decoration: none;
-	border-bottom:2px dotted #7BBFFD;
-}
-body[data-theme="default-light"] #generated_url a:hover {
-	border-bottom:2px dotted #309afc;
-}
-
-/* Url param syntax styling */
-body[data-theme="default-light"] #generated_url .part {
-	color:black;
-}
-body[data-theme="default-light"] #generated_url .param {
-	color:#309afc;
-}
-body[data-theme="default-light"] #generated_url .sep {
-	color:#bebebe;
-}
-body[data-theme="default-light"] #generated_url .eq {
-	color:#94A6B6;
-}
+/***************** THEMES ******************/
+/* ----- Light ----- */
+body[data-theme="default-light"] #global_container {color:#222;background-color: #e8e8e8;}
+body[data-theme="default-light"] h1{color:#222;}
+body[data-theme="default-light"] h3 {color:#222;border-bottom-color: #e3e3e3;}
+body[data-theme="default-light"] .toolbox {background-color: #f8f8f8;}
+body[data-theme="default-light"] .controls>.button {color:#8b8b8b;background-color: #e3e3e3;border:2px solid #e3e3e3;}
+body[data-theme="default-light"] .controls>.button:hover{color:#fff;border-color:#000;background-color: #000;}
+body[data-theme="default-light"] .controls>.button.current {color:#3b9ffb;border-color:#3b9ffb;background-color: #fff;}
+body[data-theme="default-light"] #query_params > li label {color:#0084ff;border:none;background-color: #dedede;}
+body[data-theme="default-light"] #query_params > li input {color:#000;border:1px solid #bfbfbf;}
+body[data-theme="default-light"] #query_params > li label:after {color:#d2d2d2;}
+body[data-theme="default-light"] #query_params > li input:focus {border-color:#000;box-shadow:0 0 6px 0 #bbb;}
+body[data-theme="default-light"] #query_params > li.editing input {color:gray;box-shadow:0 0 6px 0 #bbb;border-color:black;}
+body[data-theme="default-light"] #query_params .eq {color:#d2d2d2;}
+body[data-theme="default-light"] #query_params .delete {color:#bebebe;}
+body[data-theme="default-light"] #query_params .delete:hover {	color:#fff;background-color: #E41F71;}
+body[data-theme="default-light"] #query_params .delete:active {color:#777;background-color: #eee;border-color:#aaa;}
+body[data-theme="default-light"] #generated_url a {border-bottom:2px dotted #7BBFFD;}
+body[data-theme="default-light"] #generated_url a:hover {border-bottom:2px dotted #309afc;}
+body[data-theme="default-light"] #generated_url .part {color:black;}
+body[data-theme="default-light"] #generated_url .param {color:#309afc;}
+body[data-theme="default-light"] #generated_url .sep {color:#bebebe;}
+body[data-theme="default-light"] #generated_url .eq {color:#94A6B6;}
+body[data-theme="default-light"] .url-go {color:#000;background-color: #0084FF;}
+body[data-theme="default-light"] .url-go:hover {background-color:#000;color:#fff;}
 
 /* ----- Dark ----- */
-
-body[data-theme="default-dark"] #global_container {
-	color:#ccc;
-	background-color: #111;
-}
-
-body[data-theme="default-dark"] h1{
-	color:#ddd;
-}
-body[data-theme="default-dark"] h3 {
-	color:#888888;
-	border-bottom-color: #666;
-}
-body[data-theme="default-dark"] .toolbox {
-	background-color: #333;
-}
-body[data-theme="default-dark"] .controls>.button {
-	color:#5F5F5F;
-	background-color: #272727;
-}
-body[data-theme="default-dark"] .controls>.button:hover{
-	color:#8b8b8b;
-	background-color: #000;
-}
-body[data-theme="default-dark"] .controls>.button.current {
-	color:#111;
-	background-color: #58BD74;
-	box-shadow: 0 0 5px #000;
-}
-
-body[data-theme="default-dark"] #query_params > li label {
-	color:#58BD74;
-	border:none;
-	background-color: #4D4C4C;
-}
-body[data-theme="default-dark"] #query_params > li input {
-	border-color: #CACACA;
-	background-color: #CACACA;
-}
-body[data-theme="default-dark"] #query_params > li label:after {
-	color:#d2d2d2;
-}
-body[data-theme="default-dark"] #query_params > li input:focus {
-	border-color:#000;
-	box-shadow:0 0 6px 0 #bbb;
-}
-body[data-theme="default-dark"] #query_params > li.editing input {
-	color:gray;
-	box-shadow:0 0 6px 0 #bbb;
-	border-color:black;
-}
-body[data-theme="default-dark"] #query_params .eq {
-	color:#d2d2d2;
-}
-body[data-theme="default-dark"] #query_params .delete {
-	color:#909090;
-	border-color:#222;
-}
-body[data-theme="default-dark"] #query_params .delete:hover {
-	color:#E5E5E5;
-	background-color: #106666;
-	border-color:#042C2C;
-}
-body[data-theme="default-dark"] #query_params .delete:active {
-	color:#E5E5E5;
-	background-color: #58BD74;
-	border-color:#042C2C;
-}
-
-body[data-theme="default-dark"] #generated_url a {
-	font:21px 'Opensans-semibold';
-	text-decoration: none;
-	color:#DFF2B1;
-	border-bottom:2px dotted #03743C;
-}
-body[data-theme="default-dark"] #generated_url a:hover {
-	border-bottom-color: #02A856;
-}
-
-/* Url param syntax styling */
+body[data-theme="default-dark"] #global_container {color:#ccc;background-color: #111;}
+body[data-theme="default-dark"] h1{color:#ddd;}
+body[data-theme="default-dark"] h3 {color:#888888;border-bottom-color:#666;}
+body[data-theme="default-dark"] a, body[data-theme="default-dark"] a:active, body[data-theme="default-dark"] a:visited {color:#03C565;}
+body[data-theme="default-dark"] .toolbox {background-color: #333;}
+body[data-theme="default-dark"] .controls>.button {color:#5F5F5F;background-color: #272727;}
+body[data-theme="default-dark"] .controls>.button:hover{color:#8b8b8b;background-color:#000;}
+body[data-theme="default-dark"] .controls>.button.current {color:#111;background-color:#58BD74;box-shadow: 0 0 5px #000;}
+body[data-theme="default-dark"] #query_params > li label {color:#58BD74;border:none;background-color: #4D4C4C;}
+body[data-theme="default-dark"] #query_params > li input {border-color: #CACACA;background-color: #CACACA;}
+body[data-theme="default-dark"] #query_params > li label:after {color:#d2d2d2;}
+body[data-theme="default-dark"] #query_params > li input:focus {border-color:#000;box-shadow:0 0 6px 0 #bbb;}
+body[data-theme="default-dark"] #query_params > li.editing input {color:gray;box-shadow:0 0 6px 0 #bbb;border-color:black;}
+body[data-theme="default-dark"] #query_params .eq {color:#d2d2d2;}
+body[data-theme="default-dark"] #query_params .delete {color:#909090;border:1px solid #111;}
+body[data-theme="default-dark"] #query_params .delete:hover {color:#E5E5E5;background-color: #106666;border-color:#042C2C;}
+body[data-theme="default-dark"] #query_params .delete:active {color:#E5E5E5;background-color: #58BD74;border-color:#042C2C;}
+body[data-theme="default-dark"] #generated_url a {color:#DFF2B1;	border-bottom:2px dotted #03743C;}
+body[data-theme="default-dark"] #generated_url a:hover {border-bottom-color: #02A856;}
 body[data-theme="default-dark"] #generated_url .part {color:#832A71;}
 body[data-theme="default-dark"] #generated_url a:hover .part {color:#982C82;}
-
 body[data-theme="default-dark"] #generated_url .param {color:#02A856;}
 body[data-theme="default-dark"] #generated_url a:hover .param {color:#03C565;}
-
 body[data-theme="default-dark"] #generated_url .sep {color:#106666;}
 body[data-theme="default-dark"] #generated_url .sep {color:#007474;}
-
 body[data-theme="default-dark"] #generated_url .eq {color:#077124;}
 body[data-theme="default-dark"] #generated_url .eq {color:#1A622E;}
+body[data-theme="default-dark"] .url-go {color:#222;background-color: #832A71;}
+body[data-theme="default-dark"] .url-go:hover {background-color:#982C82;color:#000;}

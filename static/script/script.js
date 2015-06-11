@@ -117,7 +117,8 @@ $(function(){
 
 	var query_params = {
 		$el: $('ul#query_params'),
-		template: _.template('<li><label><%= category %></label> <input type="text" data-category="<%= category %>" value="<%= value %>" /> <div class="choose delete"><i class="fa fa-trash-o"></i></div></li>'),
+		$deleteElClassName: 'delete',
+		template: _.template('<li><label><%= category %></label> <input type="text" data-category="<%= category %>" value="<%= value %>" /> <div data-action="delete" class="choose delete"><i class="fa fa-trash-o"></i></div></li>'),
 
 		renderAll: function(data, selected){
 			var items = '';
@@ -152,9 +153,32 @@ $(function(){
 
 		bind: function(){
 			// apply changes to query param on blur and enter press
-			query_params.$el.on('keyup blur', 'input', function(e){
+			query_params.$el.on('keyup blur click', 'input, .delete', function(e){
+
+				var target = e.target;
+				var currentParam;
+
+
+				// Ignore all keyup events except for enter press
 				if (e.type === 'keyup' && e.which !== 13) return false;
-				query_params.onUpdate(this);
+
+				// Determine action based on event target
+				if (target.dataset.category){
+					// we updated a param
+					query_params.onUpdate(this);
+
+				} else if (target.dataset.action && target.dataset.action === 'delete'){
+					// we clicked on the delete button
+					currentParam = $(target).prev('input');
+
+					// clear the associated input and regenerate the URL
+					if (currentParam.val() !== ''){
+						currentParam.val('');
+						currentParam.trigger('blur');
+					}
+				}
+
+				e.stopPropagation();
 			});
 		},
 
@@ -166,6 +190,8 @@ $(function(){
 
 	var url = {
 		$el: $('#generated_url'),
+		$goLink: $('.url-go'),
+		$copyLink: $('.url-copy'),
 
 		generate: function(){
 			var generated = {};
@@ -219,9 +245,12 @@ $(function(){
 
 		render: function( ){
 			var parts = url.generate();
-			var newEl = $('<a href="' + parts.protocol + '://' + parts.environment + '/' + $.param(parts.query_params) + '">' + url.constructText(parts, true) + '</a>');
+			var newHref = parts.protocol + '://' + parts.environment + '/' + $.param(parts.query_params);
+			var newEl = $('<a href="' + newHref + '">' + url.constructText(parts, true) + '</a>');
 
 			util.appendHTML(newEl, url.$el);
+			url.$copyLink.attr('data-clipboard-text', newHref);
+			url.$goLink.attr('href', newHref);
 		},
 
 		init: function(){
@@ -233,5 +262,25 @@ $(function(){
 	query_params.init( full_dataSet.query_params, dataService.getCategory('query_params') );
 	url_settings.init();
 	url.init();
+	ZeroClipboard.config( { swfPath: "static/vendor/ZeroClipboard/ZeroClipboard.swf" } );
+
+
+	var client = new ZeroClipboard( $('.url-copy') );
+
+	client.on( "ready", function( readyEvent ) {
+
+		client.on( "aftercopy", function( event ) {
+			$(event.target).addClass('alerting');
+
+			var timeoutID = window.setTimeout(function(){
+				$(event.target).removeClass('alerting');
+			}, 2000);
+
+			// this -> client
+			// event.target -> the element that was clicked
+			// event.data["text/plain"] -> text that was copied
+		});
+	});
+
 
 });
