@@ -110,9 +110,7 @@ $(function(){
 
 				util.highlightSelected(el);
 			});
-
 		}
-
 	};
 
 	var query_params = {
@@ -319,32 +317,5 @@ $(function(){
 	url_settings.init();
 	url.init();
 	clipboard.init();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 });
