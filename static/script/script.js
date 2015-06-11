@@ -135,7 +135,7 @@ $(function(){
 
 	var query_params = {
 		$el: $('ul#query_params'),
-		template: _.template('<li><label><%= category %></label> <input type="text" data-category="<%= category %>" value="<%= value %>" /></li>'),
+		template: _.template('<li><label><%= category %></label> <input type="text" data-category="<%= category %>" value="<%= value %>" /> <div class="choose delete"><i class="fa fa-trash-o"></i></div></li>'),
 
 		renderAll: function(data, selected){
 			var items = '';

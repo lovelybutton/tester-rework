@@ -6,11 +6,8 @@
 /* General Resets */
 body {
 	font:12px/1.75em Verdana, Arial, sans-serif;
-	background-color:#e8e8e8;
 }
-#global_container {
-	background-color: #e8e8e8;
-}
+
 h2 {
 	margin:0 0 .5em;
 	font:24px/1em  'Opensans-bold';
@@ -20,7 +17,7 @@ h3 {
 	padding:0 0 .25em;
 	font:18px 'Opensans-bold';
 	text-transform:none;
-	border-bottom:1px solid #e3e3e3;
+	border-bottom:1px solid #ccc;
 }
 input::-ms-clear {
 	display: none;  /*remove the 'x' clear button from ie browsers */
@@ -33,38 +30,24 @@ input::-ms-clear {
 }
 
 .toolbox {
-	margin-bottom:1em;
+	margin-bottom:1.5em;
 	padding: 2em 2.5em;
-	background-color: #f8f8f8;
 }
 .toolbox .log {
 	margin-top:1.25em;
-	color:#aaa;
 }
-.toolbox.first
-	{margin-right:3%;
+.toolbox.first {
+	margin-right:3%;
 }
 
 /* Group selectors for protocol, environment etc */
 .controls>.button {
 	margin-right: .35em;
-	padding:.2em 1em;
+	padding:.35em 1em;
 	font-family:'Opensans-bold', Arial, Helvetica, sans-serif;
 	font-size:14px;
-	color:#8b8b8b;
-	background-color: #e3e3e3;
-	border:2px solid #e3e3e3;
 }
-.controls>.button:hover{
-	color:#fff;
-	border-color:#000;
-	background-color: #000;
-}
-.controls>.button.current {
-	color:#3b9ffb;
-	border-color:#3b9ffb;
-	background-color: #fff;
-}
+
 
 /* Query parameters */
 #query_params > li{
@@ -72,14 +55,12 @@ input::-ms-clear {
 	margin-bottom: .75em;
 	cursor:pointer;
 }
-
 #query_params > li label,
 #query_params > li input{
 	display: inline-block;
 	height:32px;
 	padding:0 .25em 0 .75em;
 	font:14px/32px 'Opensans-semibold';
-	color:#000;
 	border:1px solid #bfbfbf;
 	cursor: default;
 }
@@ -90,50 +71,34 @@ input::-ms-clear {
 	margin-right: 25px;
 	text-transform: none;
 	font-family:'Opensans-bold';
-	color:#0084ff;
 	border:none;
-	background-color: #dedede;
 }
 #query_params > li input {
 	width: 49%;
 }
-
 #query_params > li label:after {
 	display: block;
 	position: absolute;
 	content:"=";
 	right:-18px;
 	top:0;
-	color:#d2d2d2;
 }
 #query_params > li input:focus {
-	border-color:#000;
-	box-shadow:0 0 6px 0 #bbb;
 	outline:none;
 }
-
 #query_params > li.editing input {
-	color:gray;
-	box-shadow:0 0 6px 0 #bbb;
 	border:1px solid black;
 }
-
 #query_params .eq {
 	float:left;
 	margin:0 .75em;
-	color:#d2d2d2;
 }
-#query_params .remove {float:right;
+#query_params .delete {
+	float:right;
 	padding:0 .75em;
 	height:30px;
 	line-height:28px;
-	color:#909090;
 	border-radius:4px;
-	border:1px solid #dadada;
-}
-#query_params .remove:hover {color:#777;
-	background-color: #eee;
-	border-color:#aaa;
 }
 
 
@@ -141,34 +106,14 @@ input::-ms-clear {
 .urlbox {
 	position: relative;
 }
-.urlbox .toolbox{
-	/*margin-bottom:0;*/
-}
 #generated_url a {
-	display: block;
+	display: inline-block;
 	padding:0;
 	position: relative;
-	font:21px 'Opensans-semibold';
-	/*text-decoration: none;*/
 	word-break:break-all;
 }
 
-/* Url param syntax styling */
-#generated_url .part {
-	color:black;
-}
-#generated_url .param {
-	color:#309afc;
-}
-#generated_url .sep {
-	color:#bebebe;
-}
-#generated_url .eq {
-	color:#94A6B6;
-}
-
-
-.url-options {
+/*.url-options {
 	margin:0 auto 2em;
  }
 .url-options .url-go{
@@ -191,4 +136,193 @@ input::-ms-clear {
 	position: absolute;
 	 top:-30px;
 	 right:0;
+}*/
+
+
+
+/***************** SKINS ******************/
+/* ----- Light ----- */
+body[data-theme="default-light"] #global_container {
+	color:#222;
+	background-color: #e8e8e8;
+}
+
+body[data-theme="default-light"] h1{
+	color:#222;
+}
+body[data-theme="default-light"] h3 {
+	color:#222;
+	border-bottom-color: #e3e3e3;
+}
+body[data-theme="default-light"] .toolbox {
+	background-color: #f8f8f8;
+}
+body[data-theme="default-light"] .controls>.button {
+	color:#8b8b8b;
+	background-color: #e3e3e3;
+	border:2px solid #e3e3e3;
+}
+body[data-theme="default-light"] .controls>.button:hover{
+	color:#fff;
+	border-color:#000;
+	background-color: #000;
+}
+body[data-theme="default-light"] .controls>.button.current {
+	color:#3b9ffb;
+	border-color:#3b9ffb;
+	background-color: #fff;
+}
+
+body[data-theme="default-light"] #query_params > li label {
+	color:#0084ff;
+	border:none;
+	background-color: #dedede;
+}
+body[data-theme="default-light"] #query_params > li input {
+	color:#000;
+	border:1px solid #bfbfbf;
+}
+body[data-theme="default-light"] #query_params > li label:after {
+	color:#d2d2d2;
+}
+body[data-theme="default-light"] #query_params > li input:focus {
+	border-color:#000;
+	box-shadow:0 0 6px 0 #bbb;
+}
+body[data-theme="default-light"] #query_params > li.editing input {
+	color:gray;
+	box-shadow:0 0 6px 0 #bbb;
+	border-color:black;
+}
+body[data-theme="default-light"] #query_params .eq {
+	color:#d2d2d2;
+}
+body[data-theme="default-light"] #query_params .delete {
+	color:#bebebe;
+}
+body[data-theme="default-light"] #query_params .delete:hover {
+	color:#FFF;
+	background-color: #E41F71;
+}
+body[data-theme="default-light"] #query_params .delete:active {
+	color:#777;
+	background-color: #eee;
+	border-color:#aaa;
+}
+
+body[data-theme="default-light"] #generated_url a {
+	font:21px 'Opensans-semibold';
+	text-decoration: none;
+	border-bottom:2px dotted #7BBFFD;
+}
+body[data-theme="default-light"] #generated_url a:hover {
+	border-bottom:2px dotted #309afc;
+}
+
+/* Url param syntax styling */
+body[data-theme="default-light"] #generated_url .part {
+	color:black;
+}
+body[data-theme="default-light"] #generated_url .param {
+	color:#309afc;
+}
+body[data-theme="default-light"] #generated_url .sep {
+	color:#bebebe;
+}
+body[data-theme="default-light"] #generated_url .eq {
+	color:#94A6B6;
+}
+
+/* ----- Dark ----- */
+
+body[data-theme="default-dark"] #global_container {
+	color:#ccc;
+	background-color: #111;
+}
+
+body[data-theme="default-dark"] h1{
+	color:#ddd;
+}
+body[data-theme="default-dark"] h3 {
+	color:#888888;
+	border-bottom-color: #666;
+}
+body[data-theme="default-dark"] .toolbox {
+	background-color: #333;
+}
+body[data-theme="default-dark"] .controls>.button {
+	color:#5F5F5F;
+	background-color: #272727;
+}
+body[data-theme="default-dark"] .controls>.button:hover{
+	color:#8b8b8b;
+	background-color: #000;
+}
+body[data-theme="default-dark"] .controls>.button.current {
+	color:#111;
+	background-color: #58BD74;
+	box-shadow: 0 0 5px #000;
+}
+
+body[data-theme="default-dark"] #query_params > li label {
+	color:#58BD74;
+	border:none;
+	background-color: #4D4C4C;
+}
+body[data-theme="default-dark"] #query_params > li input {
+	border-color: #CACACA;
+	background-color: #CACACA;
+}
+body[data-theme="default-dark"] #query_params > li label:after {
+	color:#d2d2d2;
+}
+body[data-theme="default-dark"] #query_params > li input:focus {
+	border-color:#000;
+	box-shadow:0 0 6px 0 #bbb;
+}
+body[data-theme="default-dark"] #query_params > li.editing input {
+	color:gray;
+	box-shadow:0 0 6px 0 #bbb;
+	border-color:black;
+}
+body[data-theme="default-dark"] #query_params .eq {
+	color:#d2d2d2;
+}
+body[data-theme="default-dark"] #query_params .delete {
+	color:#909090;
+	border-color:#222;
+}
+body[data-theme="default-dark"] #query_params .delete:hover {
+	color:#E5E5E5;
+	background-color: #106666;
+	border-color:#042C2C;
+}
+body[data-theme="default-dark"] #query_params .delete:active {
+	color:#E5E5E5;
+	background-color: #58BD74;
+	border-color:#042C2C;
+}
+
+body[data-theme="default-dark"] #generated_url a {
+	font:21px 'Opensans-semibold';
+	text-decoration: none;
+	color:#DFF2B1;
+	border-bottom:2px dotted #03743C;
+}
+body[data-theme="default-dark"] #generated_url a:hover {
+	border-bottom-color: #02A856;
+}
+
+/* Url param syntax styling */
+body[data-theme="default-dark"] #generated_url .part {
+	color:#832A71;
+}
+body[data-theme="default-dark"] #generated_url .param {
+	color:#02A856;
+}
+body[data-theme="default-dark"] #generated_url .sep {
+	color:#106666;
+}
+body[data-theme="default-dark"] #generated_url .eq {
+	color:#077124;
 }
