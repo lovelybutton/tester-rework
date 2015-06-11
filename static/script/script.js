@@ -19,15 +19,16 @@ $(function(){
 
 	var full_dataSet = {
 		query_params : {
-			application_type: ['corporate','ira','trust','partnership','llc','individual','joint'],
-			ccy: ['aud','cad','chf','eur','gbp','hkd','jpy','nzd','usd'],
-			country: ['afghanistan','albania','algeria','american_samoa'],
-			rb: ['fxcm', 'mt4'],
-			execution: ['dealing_desk', 'no_dealing_desk'],
-			locale: ['ar_AE', 'de_DE'],
-			platform: ['mt4', 'trading_station', 'active_trader'],
-			product: ['spread_bet', 'fx'],
-			service_level: ['1', '2', '3', '4']
+			application_type: ['corporate','ira','trust','partnership','llc','individual','joint']
+			// ,
+			// ccy: ['aud','cad','chf','eur','gbp','hkd','jpy','nzd','usd'],
+			// country: ['afghanistan','albania','algeria','american_samoa'],
+			// rb: ['fxcm', 'mt4'],
+			// execution: ['dealing_desk', 'no_dealing_desk'],
+			// locale: ['ar_AE', 'de_DE'],
+			// platform: ['mt4', 'trading_station', 'active_trader'],
+			// product: ['spread_bet', 'fx'],
+			// service_level: ['1', '2', '3', '4']
 		},
 		url_settings : {
 			'environment': {
@@ -113,17 +114,104 @@ $(function(){
 		}
 	};
 
+	// Using typeahead: http://twitter.github.io/typeahead.js/examples/
+	// https://github.com/twitter/typeahead.js
+
+	/*
+	I'll need these API methods:
+
+
+	$('.exampleEl').typeahead('val');
+	$('.exampleEl').typeahead('val', myVal);
+	$('.exampleEl').typeahead('open');
+	$('.exampleEl').typeahead('close');
+
+	// bind to typeahead event
+	$('.exampleEl').bind('typeahead:select', function(ev, suggestion) {
+		console.log('Selection: ' + suggestion);
+	});
+
+	// other events:
+	typehead:active
+	typehead:idle
+	typehead:open // fires when results container opens
+	typehead:close 
+	typehead:change
+	typehead:render
+	typehead:select // fires when a suggestion is selected
+	* typehead:autocomplete // fires when an autocomplete occurs
+	
+
+
+
+	opts.source = 
+	function (query, syncResults, asyncResults)
+
+
+	*/
+	var autocomplete = {
+
+		substringMatcher: function(strs) {
+		  return function findMatches(q, cb) {
+		    var matches, substringRegex;
+
+		    // an array that will be populated with substring matches
+		    matches = [];
+
+		    // regex used to determine if a string contains the substring `q`
+			substringRegex = new RegExp(q, 'i');
+
+		    // iterate through the pool of strings and for any string that
+		    // contains the substring `q`, add it to the `matches` array
+		    $.each(strs, function(i, str) {
+		      if (substringRegex.test(str)) {
+		        matches.push(str);
+		      }
+		    });
+
+		    cb(matches);
+		  };
+		},
+
+		bind: function( element, dataset ){
+			element = $(element);
+			dataset = ['corporate','ira','trust','partnership','llc','individual','joint'];
+
+			// attach typehead functionality
+			element.each(function(){
+				$(this).find('input').typeahead({
+				  highlight: true,
+				  hint: false,
+				  minLength: 0
+				},
+				{
+				  name: 'dataset',
+				  source: autocomplete.substringMatcher(dataset)
+				});
+			});
+		},
+
+		init: function(element){
+			var dataset = full_dataSet.query_params.application_type;
+			autocomplete.bind(element, dataset);
+
+		}
+	};
+
+
 	var query_params = {
 		$el: $('ul#query_params'),
+		$items: $(),
 		$deleteElClassName: 'delete',
 		template: _.template('<li><label><%= category %></label> <input type="text" data-category="<%= category %>" value="<%= value %>" /> <div data-action="delete" class="choose delete"><i class="fa fa-trash-o"></i></div></li>'),
 
 		renderAll: function(data, selected){
-			var items = '';
+			var items = $();
 
 			// render all items and set values if provided
 			_.each( data, function(value, category, obj){
 				var finalValue = '';
+				var el;
 
 				// check if we have a preselected value or not
 				if ( _.has(selected, category) ) {
@@ -131,10 +219,9 @@ $(function(){
 				}
 
 				// append newly-prepared item to set
-				items += query_params.template({category: category, value: finalValue });
+				query_params.$items = query_params.$items.add(query_params.template({category: category, value: finalValue }));
+				
 			});
-
-			query_params.$el.append(items);
 		},
 
 		onUpdate: function(element){
@@ -151,11 +238,13 @@ $(function(){
 
 		bind: function( ){
 			// apply changes to query param on blur and enter press
-			query_params.$el.on('keyup blur', 'input', function(e){
-				// Ignore all keyup events except for enter press
-				if (e.type === 'keyup' && e.which !== 13) return false;
-				query_params.onUpdate(this);
-			});
+			autocomplete.bind(query_params.$items);
+			
+			// query_params.$el.on('keyup blur', 'input', function(e){
+			// 	// Ignore all keyup events except for enter press
+			// 	if (e.type === 'keyup' && e.which !== 13) return false;
+			// 	query_params.onUpdate(this);
+			// });
 
 			// Set up the delete button handler
 			query_params.$el.on('click', '.delete', function(e){
@@ -172,6 +261,7 @@ $(function(){
 		init: function( full_dataSet, selected ){
 			query_params.renderAll(full_dataSet, selected);
 			query_params.bind();
+			util.appendHTML(query_params.$items, query_params.$el);
 		}
 	};
 
@@ -266,51 +356,7 @@ $(function(){
 		}
 	};
 
-	// Using typeahead: http://twitter.github.io/typeahead.js/examples/
-	// https://github.com/twitter/typeahead.js
-	var autocomplete = {
 
-		substringMatcher: function(strs) {
-		  return function findMatches(q, cb) {
-		    var matches, substringRegex;
-
-		    // an array that will be populated with substring matches
-		    matches = [];
-
-		    // regex used to determine if a string contains the substring `q`
-			substringRegex = new RegExp(q, 'i');
-
-		    // iterate through the pool of strings and for any string that
-		    // contains the substring `q`, add it to the `matches` array
-		    $.each(strs, function(i, str) {
-		      if (substringRegex.test(str)) {
-		        matches.push(str);
-		      }
-		    });
-
-		    cb(matches);
-		  };
-		},
-
-		bind: function( element, dataset ){
-			element = $(element);
-
-			element.typeahead({
-			  hint: true,
-			  minLength: 0
-			},
-			{
-			  name: dataset,
-			  source: substringMatcher(dataset)
-			});
-		},
-
-		init: function(element){
-			var dataset = full_dataSet.query_params.application_type;
-			autocomplete.bind(element, dataset);
-
-		}
-	};
 
 	// Setup
 	query_params.init( full_dataSet.query_params, dataService.getCategory('query_params') );
