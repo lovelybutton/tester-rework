@@ -133,6 +133,17 @@ input::-ms-clear {
 	 top:-30px;
 	 right:0;
 }
+/* TODO: redo this alerting UI. Needs to be reworked */
+.url-options .url-copy.alerting:before {
+	content:"";
+	position: absolute;
+	left:163px;
+	top:8px;
+	line-height:0;width:0;height:0;
+	border:5px solid transparent;
+	border-right-width:7px;
+	border-right-color:rgba(255, 255, 255, 0.2);
+}
 .url-options .url-copy.alerting:after {
 	content: "copied!";
 	position:absolute;
@@ -143,16 +154,6 @@ input::-ms-clear {
 	line-height: 1em;
 	border-radius: 6px;
 	background-color: rgba(255, 255, 255, 0.2);
-}
-.url-options .url-copy.alerting:before {
-	content:"";
-	position: absolute;
-	left:163px;
-	top:8px;
-	line-height:0;width:0;height:0;
-	border:5px solid transparent;
-	border-right-width:7px;
-	border-right-color:rgba(255, 255, 255, 0.2);
 }
 .url-copy.zeroclipboard-is-hover { text-decoration: none;}
 /*.url-copy.zeroclipboard-is-active { background-color: #aaa; }*/

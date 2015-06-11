@@ -151,34 +151,23 @@ $(function(){
 			url.render();
 		},
 
-		bind: function(){
+		bind: function( ){
 			// apply changes to query param on blur and enter press
-			query_params.$el.on('keyup blur click', 'input, .delete', function(e){
-
-				var target = e.target;
-				var currentParam;
-
-
+			query_params.$el.on('keyup blur', 'input', function(e){
 				// Ignore all keyup events except for enter press
 				if (e.type === 'keyup' && e.which !== 13) return false;
+				query_params.onUpdate(this);
+			});
 
-				// Determine action based on event target
-				if (target.dataset.category){
-					// we updated a param
-					query_params.onUpdate(this);
+			// Set up the delete button handler
+			query_params.$el.on('click', '.delete', function(e){
+				var currentParam = $(e.target).closest('li').find('input');
 
-				} else if (target.dataset.action && target.dataset.action === 'delete'){
-					// we clicked on the delete button
-					currentParam = $(target).prev('input');
-
-					// clear the associated input and regenerate the URL
-					if (currentParam.val() !== ''){
-						currentParam.val('');
-						currentParam.trigger('blur');
-					}
+				// clear the associated input and regenerate the URL
+				if (currentParam.val() !== ''){
+					currentParam.val('');
+					currentParam.trigger('blur');
 				}
-
-				e.stopPropagation();
 			});
 		},
 
@@ -258,29 +247,104 @@ $(function(){
 		}
 	};
 
+	var clipboard = {
+		init: function(){
+			ZeroClipboard.config( { swfPath: "static/vendor/ZeroClipboard/ZeroClipboard.swf" } );
+			var client = new ZeroClipboard( $('.url-copy') );
+
+			client.on( "ready", function( readyEvent ) {
+				client.on( "aftercopy", function( event ){
+					//TODO: This is a crude way of alerting the user that text has been copied. Rework
+					$(event.target).addClass('alerting');
+					var timeoutID = window.setTimeout(function(){
+						$(event.target).removeClass('alerting');
+					}, 2000);
+
+					// this -> client
+					// event.target -> the element that was clicked
+					// event.data["text/plain"] -> text that was copied
+				});
+			});
+		}
+	};
+
+	// Using typeahead: http://twitter.github.io/typeahead.js/examples/
+	// https://github.com/twitter/typeahead.js
+	var autocomplete = {
+
+		substringMatcher: function(strs) {
+		  return function findMatches(q, cb) {
+		    var matches, substringRegex;
+
+		    // an array that will be populated with substring matches
+		    matches = [];
+
+		    // regex used to determine if a string contains the substring `q`
+			substringRegex = new RegExp(q, 'i');
+
+		    // iterate through the pool of strings and for any string that
+		    // contains the substring `q`, add it to the `matches` array
+		    $.each(strs, function(i, str) {
+		      if (substringRegex.test(str)) {
+		        matches.push(str);
+		      }
+		    });
+
+		    cb(matches);
+		  };
+		},
+
+		bind: function( element, dataset ){
+			element = $(element);
+
+			element.typeahead({
+			  hint: true,
+			  minLength: 0
+			},
+			{
+			  name: dataset,
+			  source: substringMatcher(dataset)
+			});
+		},
+
+		init: function(element){
+			var dataset = full_dataSet.query_params.application_type;
+			autocomplete.bind(element, dataset);
+
+		}
+	};
+
 	// Setup
 	query_params.init( full_dataSet.query_params, dataService.getCategory('query_params') );
 	url_settings.init();
 	url.init();
-	ZeroClipboard.config( { swfPath: "static/vendor/ZeroClipboard/ZeroClipboard.swf" } );
+	clipboard.init();
 
 
-	var client = new ZeroClipboard( $('.url-copy') );
 
-	client.on( "ready", function( readyEvent ) {
 
-		client.on( "aftercopy", function( event ) {
-			$(event.target).addClass('alerting');
 
-			var timeoutID = window.setTimeout(function(){
-				$(event.target).removeClass('alerting');
-			}, 2000);
 
-			// this -> client
-			// event.target -> the element that was clicked
-			// event.data["text/plain"] -> text that was copied
-		});
-	});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 });
