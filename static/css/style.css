@@ -66,7 +66,7 @@ input::-ms-clear {
 }
 
 #query_params > li label {
-	width:35%;
+	width:38%;
 	position: relative;
 	margin-right: 25px;
 	text-transform: none;
@@ -89,6 +89,13 @@ input::-ms-clear {
 	vertical-align: inherit !important; /* override typeahead's vert align top */
 	border:none;
 }
+#query_params.autocompleteOpen .tt-input {
+	background-color: #555;
+}
+#query_params.autocompleteOpen .tt-input.active {
+	background-color: #fff;
+}
+
 #query_params .tt-input:focus {
 	outline:none;
 }
@@ -96,13 +103,19 @@ input::-ms-clear {
 	display: block;
 	width: 100%;
 	top:1px;
-	font:14px/32px 'Opensans-semibold';	
-	border-top:1px solid #ccc;
+	font:14px/32px 'Opensans-semibold';
+	border-top:1px solid #aaa;
 	color: #000;
 	background: #fff;
+	max-height: 150px;
+	overflow-y: auto;
+	border-radius:0 0 4px 4px;
+}
+#query_params .tt-highlight {
+	font-family: 'Opensans-bold';
 }
 #query_params .tt-dataset {
-	padding:10px 0;
+	padding:10px 0 5px;
 }
 #query_params .tt-suggestion {
 	padding:0 10px;
@@ -113,6 +126,8 @@ input::-ms-clear {
 	content:"=";
 	right:-18px;
 	top:0;
+	font-weight: bold;
+	font-size:18px;
 }
 #query_params .eq {
 	float:left;
@@ -123,9 +138,8 @@ input::-ms-clear {
 	padding:0 .75em;
 	height:30px;
 	line-height:28px;
-	border-radius:4px;
+	border-radius:100px;
 }
-
 
 /* GENERATED URL Styles */
 .urlbox {
@@ -211,17 +225,23 @@ body[data-theme="default-light"] .url-go:hover {background-color:#000;color:#fff
 body[data-theme="default-dark"] {color:#ccc;background-color: #111615;}
 body[data-theme="default-dark"] h1{color:#ddd;}
 body[data-theme="default-dark"] h3 {color:#888888;border-bottom-color:#666;}
-body[data-theme="default-dark"] a, body[data-theme="default-dark"] a:active, body[data-theme="default-dark"] a:visited {color:#036C4F;}
+body[data-theme="default-dark"] a,
+body[data-theme="default-dark"] a:active,
+body[data-theme="default-dark"] a:visited {color:#036C4F;}
 body[data-theme="default-dark"] .toolbox {background-color: #333;}
 body[data-theme="default-dark"] .controls>.button {color:#5F5F5F;background-color: #272727;box-shadow: 0 0 2px rgba(0,0,0,0.8);}
 body[data-theme="default-dark"] .controls>.button:hover{color:#8b8b8b;background-color:#000;}
 body[data-theme="default-dark"] .controls>.button.current {color:#111;background-color:#006656;box-shadow: 0 0 3px rgba(0,0,0,0.8);}
 body[data-theme="default-dark"] .controls>.button.current:hover {background-color:#0E6F3F;}
-body[data-theme="default-dark"] #query_params > li label {color:#019B71;border:none;background-color: #4D4C4C;}
-body[data-theme="default-dark"] #query_params label:after {color:#d2d2d2;}
+body[data-theme="default-dark"] #query_params > li label {color:#019B71;border:none;background-color: #2D2C2C;}
+body[data-theme="default-dark"] #query_params label:after {color:#666;}
 body[data-theme="default-dark"] #query_params .tt-cursor {color:#fff;background-color: #910349;}
+body[data-theme="default-dark"] #query_params .tt-suggestion:hover{color:#fff;background-color: #9E024F;}
+body[data-theme="default-dark"] #query_params .tt-highlight {color: #B30058};
+body[data-theme="default-dark"] #query_params .tt-cursor .tt-highlight,
+body[data-theme="default-dark"] #query_params .tt-suggestion:hover .tt-highlight {color:white} /* this is not working - look into */
 body[data-theme="default-dark"] #query_params .eq {color:#d2d2d2;}
-body[data-theme="default-dark"] #query_params .delete {color:#909090;border:1px solid #111;}
+body[data-theme="default-dark"] #query_params .delete {color:#909090;background-color: #222;border:1px solid #222;}
 body[data-theme="default-dark"] #query_params .delete:hover {color:#fff;background-color: #006656;border-color:#042C2C;}
 body[data-theme="default-dark"] #query_params .delete:active {color:#fff;background-color: #58BD74;border-color:#042C2C;}
 body[data-theme="default-dark"] #generated_url a {color:#DFF2B1;	border-bottom:2px dotted #03743C;}
@@ -233,6 +253,5 @@ body[data-theme="default-dark"] #generated_url a:hover {border-bottom-color: #02
 body[data-theme="default-dark"] #generated_url a:hover .part {color:#00A196;}
 body[data-theme="default-dark"] #generated_url a:hover .param {color:#03C565;}
 body[data-theme="default-dark"] #generated_url a:hover .sep {color:#02493D;}
-
 body[data-theme="default-dark"] .url-go {color:#222;background-color: #910349;}
 body[data-theme="default-dark"] .url-go:hover {color:#000;background-color:#B30058;}

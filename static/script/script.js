@@ -19,16 +19,15 @@ $(function(){
 
 	var full_dataSet = {
 		query_params : {
-			application_type: ['corporate','ira','trust','partnership','llc','individual','joint']
-			// ,
-			// ccy: ['aud','cad','chf','eur','gbp','hkd','jpy','nzd','usd'],
-			// country: ['afghanistan','albania','algeria','american_samoa'],
-			// rb: ['fxcm', 'mt4'],
-			// execution: ['dealing_desk', 'no_dealing_desk'],
-			// locale: ['ar_AE', 'de_DE'],
-			// platform: ['mt4', 'trading_station', 'active_trader'],
-			// product: ['spread_bet', 'fx'],
-			// service_level: ['1', '2', '3', '4']
+			application_type: ['corporate','ira','trust','partnership','llc','individual','joint'],
+			ccy: ['aud','cad','chf','eur','gbp','hkd','jpy','nzd','usd'],
+			country: ['afghanistan','albania','algeria','american_samoa','aaa','bbb','ccc','ddd','eee','fff','ggg','hhh','iii','jjj'],
+			rb: ['fxcm', 'mt4'],
+			execution: ['dealing_desk', 'no_dealing_desk'],
+			locale: ['ar_AE', 'de_DE'],
+			platform: ['mt4', 'trading_station', 'active_trader'],
+			product: ['spread_bet', 'fx'],
+			service_level: ['1', '2', '3', '4']
 		},
 		url_settings : {
 			'environment': {
@@ -46,8 +45,8 @@ $(function(){
 	var dataService = (function(){
 		var data = {
 			query_params: {
-				rb: 'hello',
-				product: 'something'
+				rb: 'fxcm',
+				product: 'fx'
 			},
 			url_settings: {
 				environment: 'secure9z.fxcorporate.com/tr',
@@ -132,19 +131,16 @@ $(function(){
 	});
 
 	// other events:
-	typehead:active
-	typehead:idle
-	typehead:open // fires when results container opens
-	typehead:close 
-	typehead:change
-	typehead:render
-	typehead:select // fires when a suggestion is selected
-	* typehead:autocomplete // fires when an autocomplete occurs
-	
+	typeahead:active
+	typeahead:idle
+	typeahead:open // fires when results container opens
+	typeahead:close
+	typeahead:change
+	typeahead:render
+	typeahead:select // fires when a suggestion is selected
+	* typeahead:autocomplete // fires when an autocomplete occurs
 
-
-
-	opts.source = 
+	opts.source =
 	function (query, syncResults, asyncResults)
 
 
@@ -173,37 +169,81 @@ $(function(){
 		  };
 		},
 
-		bind: function( element, dataset ){
-			element = $(element);
-			dataset = ['corporate','ira','trust','partnership','llc','individual','joint'];
-
-			// attach typehead functionality
-			element.each(function(){
-				$(this).find('input').typeahead({
-				  highlight: true,
-				  hint: false,
-				  minLength: 0
+		bind: function( element, dataset, callbacks ){
+			var defaults = {
+				callbacks: {
+					onActive: function(){},
+					onClose: function(e){},
+					onIdle: function(){},
+					onOpen: function(){},
+					onRender: function(){},
+					onSelect: function(){},
+					onChange: function(){}
 				},
-				{
-				  name: 'dataset',
-				  source: autocomplete.substringMatcher(dataset)
-				});
+				opts: {
+					highlight: true,
+					hint: false,
+					minLength: 0,
+					limit:30
+				}
+			};
+
+			element = $(element);
+			dataset = dataset || [];
+			callbacks = callbacks || {};
+			$.extend(defaults.callbacks, callbacks);
+
+			// attach typeahead functionality
+			element.typeahead(defaults.opts, {
+			  name: 'dataset',
+			  source: autocomplete.substringMatcher(dataset)
 			});
+
+			element.on('change', callbacks.onChange);
+			element.on('typeahead:active', callbacks.onActive);
+			element.on('typeahead:close', callbacks.onClose);
+			element.on('typeahead:open', callbacks.onOpen);
+			element.on('typeahead:render', callbacks.onRender);
+			element.on('typeahead:select', callbacks.onSelect);
+			element.on('typeahead:idle', callbacks.onIdle);
+
+
+			// these work and are self-explanatory
+			// element.bind('typeahead:idle', callbacks.onIdle);
+			// element.bind('typeahead:close', callbacks.onClose);
+			// element.bind('typeahead:open', callbacks.onOpen);
+			// element.bind('typeahead:render', callbacks.onRender);
+
+			// these fire when you select with your mouse or arrow keys
+			// element.bind('typeahead:select', function(e){console.log('typeahead:select');});
+			// element.bind('typeahead:selected', function(e){console.log('typeahead:selected');});
+
+			// these fire on TAB select
+			// element.bind('typeahead:autocomplete', function(e){console.log('typeahead:autocomplete');});
+			// element.bind('typeahead:autocompleted', function(e){console.log('typeahead:autocompleted');});
+
+			// this fires if you change the value then blur but it did NOT autocomplete
+			// element.bind('change', function(e){console.log('plain change event');});
+
+			// this fires on focus
+			// element.bind('typeahead:active', function(e){console.log('typeahead:active');});
+			// these don't
+			// element.bind('typeahead:change', callbacks.onChange);
+			// element.bind('typeahead:changed', function(e){console.log('typeahead:changed');});
+
 		},
 
 		init: function(element){
 			var dataset = full_dataSet.query_params.application_type;
 			autocomplete.bind(element, dataset);
-
 		}
 	};
-
 
 	var query_params = {
 		$el: $('ul#query_params'),
 		$items: $(),
 		$deleteElClassName: 'delete',
-		template: _.template('<li><label><%= category %></label> <input type="text" data-category="<%= category %>" value="<%= value %>" /> <div data-action="delete" class="choose delete"><i class="fa fa-trash-o"></i></div></li>'),
+		template: _.template('<li><label><%= category %></label> <input type="text" data-category="<%= category %>" value="<%= value %>" /> <div data-action="delete" class="choose delete"><i class="fa fa-times"></i></div></li>'),
 
 		renderAll: function(data, selected){
 			var items = $();
@@ -219,9 +259,10 @@ $(function(){
 				}
 
 				// append newly-prepared item to set
-				query_params.$items = query_params.$items.add(query_params.template({category: category, value: finalValue }));
-				
+				items = items.add(query_params.template({category: category, value: finalValue }));
 			});
+
+			return items;
 		},
 
 		onUpdate: function(element){
@@ -236,32 +277,54 @@ $(function(){
 			url.render();
 		},
 
-		bind: function( ){
-			// apply changes to query param on blur and enter press
-			autocomplete.bind(query_params.$items);
-			
-			// query_params.$el.on('keyup blur', 'input', function(e){
-			// 	// Ignore all keyup events except for enter press
-			// 	if (e.type === 'keyup' && e.which !== 13) return false;
-			// 	query_params.onUpdate(this);
-			// });
-
+		bindDeleteButton: function(){
 			// Set up the delete button handler
 			query_params.$el.on('click', '.delete', function(e){
 				var currentParam = $(e.target).closest('li').find('input');
 
 				// clear the associated input and regenerate the URL
-				if (currentParam.val() !== ''){
-					currentParam.val('');
-					currentParam.trigger('blur');
+				if (currentParam.typeahead('val') !== ''){
+					currentParam.typeahead('val', '');
+					query_params.onUpdate(currentParam);
 				}
 			});
 		},
 
+		bindInputs: function( items ){
+			items.each(function(){
+				query_params.bindOneInput($(this).find('input'));
+			});
+		},
+
+		bindOneInput: function( item ){
+
+			autocomplete.bind(item, full_dataSet.query_params[item.data('category')], {
+				onActive: function(){},
+				onChange: function(e){
+					query_params.onUpdate(e.currentTarget);
+					$(e.currentTarget).typeahead('close');
+				},
+				onClose: function(e){
+					var el = $(e.currentTarget);
+					el.removeClass('active').closest('ul').removeClass('autocompleteOpen')
+				},
+				onIdle: function(){},
+				onOpen: function(e){
+					var el = $(e.currentTarget);
+					el.addClass('active').closest('ul').addClass('autocompleteOpen')
+				},
+				onRender: function(){},
+				onSelect: function(e){query_params.onUpdate(e.currentTarget);}
+			});
+
+		},
+
 		init: function( full_dataSet, selected ){
-			query_params.renderAll(full_dataSet, selected);
-			query_params.bind();
-			util.appendHTML(query_params.$items, query_params.$el);
+			var items = query_params.renderAll(full_dataSet, selected);
+			query_params.bindInputs( items );
+			util.appendHTML(items, query_params.$el);
+
+			query_params.bindDeleteButton();
 		}
 	};
 
@@ -355,8 +418,6 @@ $(function(){
 			});
 		}
 	};
-
-
 
 	// Setup
 	query_params.init( full_dataSet.query_params, dataService.getCategory('query_params') );
