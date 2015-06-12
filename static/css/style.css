@@ -27,20 +27,22 @@ input::-ms-clear {
 
 .button {
 	display: inline-block;
-	padding:.75em 1em;
+	padding:.7em 1em;
 	line-height:1em;
 	cursor:pointer;
 	text-decoration: none;
+	text-align: center;
 	border-radius:4px;
 }
 .button.sm {
 	padding: .3em .5em;
 }
 .button.round {
-	padding:0 .75em;
+	padding:0;
 	height:28px;
-	line-height:28px;
-	border-radius:100px;
+	width:28px;
+	line-height:27px;
+	border-radius:50%;
 }
 .toolbox {
 	margin-bottom:1.5em;
@@ -99,9 +101,10 @@ input::-ms-clear {
 	vertical-align: inherit !important; /* override typeahead's vert align top */
 	border:none;
 }
-#query_params.autocompleteOpen .tt-input {}
+#query_params.autocompleteOpen .tt-input {
+}
 #query_params.autocompleteOpen .tt-input.active {
-	background-color: #fff;
+	border-radius:4px 4px 0 0;
 }
 
 #query_params .tt-input:focus {
@@ -118,15 +121,16 @@ input::-ms-clear {
 	max-height: 150px;
 	overflow-y: auto;
 	border-radius:0 0 4px 4px;
-}
-#query_params .tt-highlight {
-	font-family: 'Opensans-bold';
+	box-shadow:inset 0 2px 3px rgba(0, 0, 0, 0.3);
 }
 #query_params .tt-dataset {
-	padding:10px 0 5px;
+	padding:5px 0 5px;
 }
 #query_params .tt-suggestion {
 	padding:0 10px;
+}
+#query_params .tt-highlight {
+	font-family: 'Opensans-bold';
 }
 #query_params > li label:after {
 	display: block;
@@ -182,12 +186,12 @@ input::-ms-clear {
 .url-options .url-copy.alerting:before {
 	content:"";
 	position: absolute;
-	left:163px;
+	left:160px;
 	top:8px;
 	line-height:0;width:0;height:0;
 	border:5px solid transparent;
 	border-right-width:7px;
-	border-right-color:rgba(255, 255, 255, 0.2);
+	border-right-color:#bbb;
 }
 .url-options .url-copy.alerting:after {
 	content: "copied!";
@@ -198,7 +202,8 @@ input::-ms-clear {
 	padding:6px;
 	line-height: 1em;
 	border-radius: 6px;
-	background-color: rgba(255, 255, 255, 0.2);
+	color:#fff;
+	background-color: #bbb;
 }
 .url-copy.zeroclipboard-is-hover { text-decoration: none;}
 /*.url-copy.zeroclipboard-is-active { background-color: #aaa; }*/
@@ -221,23 +226,38 @@ input::-ms-clear {
 body[data-theme="default-light"] {color:#222;background-color: #e8e8e8;}
 body[data-theme="default-light"] h1{color:#222;}
 body[data-theme="default-light"] h3 {color:#222;border-bottom-color: #e3e3e3;}
-body[data-theme="default-light"] .button {color:#8b8b8b;background-color: #e3e3e3;border:2px solid #e3e3e3;}
-body[data-theme="default-light"] .button:hover{color:#fff;border-color:#000;background-color: #000;}
-body[data-theme="default-light"] .button.current {color:#3b9ffb;border-color:#3b9ffb;background-color: #fff;}
+body[data-theme="default-dark"] a,
+body[data-theme="default-dark"] a:active,
+body[data-theme="default-dark"] a:visited {color:#0059B3;}
+body[data-theme="default-light"] .button {color:#8B8B8B;background-color: #e3e3e3;}
+body[data-theme="default-light"] .button:hover{color:#fff;background-color: #001220;}
+body[data-theme="default-light"] .button.current {color:#fff;background-color: #0084FF;box-shadow:inset 0 0 3px #0C7EE8;}
+body[data-theme="default-light"] .button.current:hover {background-color: #0060B9;}
 body[data-theme="default-light"] .toolbox {background-color: #f8f8f8;}
 body[data-theme="default-light"] #query_params > li label {color:#0084ff;border:none;background-color: #dedede;}
 body[data-theme="default-light"] #query_params > li label:after {color:#d2d2d2;}
 body[data-theme="default-light"] #query_params.autocompleteOpen .tt-input {color:#999;background-color: #ccc;}
-body[data-theme="default-light"] #query_params.autocompleteOpen .tt-input.active {color:#222;background-color: #fff;}
-body[data-theme="default-light"] #query_params .tt-cursor {color:#fff;background-color: #0084FF;}
-body[data-theme="default-light"] #generated_url a {border-bottom:2px dotted #7BBFFD;}
-body[data-theme="default-light"] #generated_url a:hover {border-bottom:2px dotted #309afc;}
-body[data-theme="default-light"] #generated_url .part {color:black;}
-body[data-theme="default-light"] #generated_url .param {color:#309afc;}
-body[data-theme="default-light"] #generated_url .sep {color:#bebebe;}
-body[data-theme="default-light"] #generated_url .eq {color:#94A6B6;}
-body[data-theme="default-light"] .url-go {color:#000;background-color: #0084FF;}
-body[data-theme="default-light"] .url-go:hover {background-color:#000;color:#fff;}
+body[data-theme="default-light"] #query_params.autocompleteOpen .tt-input.active {color:#222;background-color: #fff;box-shadow:0 0px 10px rgba(0, 0, 0, 0.3);}
+body[data-theme="default-light"] #query_params .tt-menu{ box-shadow:0 3px 10px rgba(0, 0, 0, 0.3); background-color: #f9f9f9;border-color:#ddd;}
+/* selected suggestion in menu */
+body[data-theme="default-light"] #query_params .tt-cursor,
+body[data-theme="default-light"] #query_params .tt-suggestion:hover {color:#fff;background-color: #D8009B;}
+/* highlighted query character */
+body[data-theme="default-light"] #query_params .tt-highlight {color: #D8009B;}
+/* selected suggestion +  highlighted query characters */
+body[data-theme="default-light"] #query_params .tt-cursor .tt-highlight,
+body[data-theme="default-light"] #query_params .tt-suggestion:hover .tt-highlight {color:#B6FF00;}
+body[data-theme="default-light"] #generated_url a {}
+body[data-theme="default-light"] #generated_url a:hover {border-bottom-color:#309afc;}
+body[data-theme="default-light"] #generated_url .part {color:#001220;}
+body[data-theme="default-light"] #generated_url .param {color:#D8009B;}
+body[data-theme="default-light"] #generated_url .sep {color:#BDBDBD;}
+body[data-theme="default-light"] #generated_url .eq {color:#FF8EBD;}
+body[data-theme="default-light"] .url-go {color:#fff;background-color: #0084FF;}
+body[data-theme="default-light"] .url-go:hover {background-color:#001220;}
+/* Copy button alert */
+body[data-theme="default-light"] .url-copy.alerting:before {border-right-color:rgba(0,0,0, 0.1);}
+body[data-theme="default-light"] .url-copy.alerting:after {color:#222;background-color: rgba(0,0,0, 0.1);}
 
 /* ----- Dark ----- */
 body[data-theme="default-dark"] {color:#ccc;background-color: #111615;}
@@ -245,29 +265,39 @@ body[data-theme="default-dark"] h1{color:#ddd;}
 body[data-theme="default-dark"] h3 {color:#888888;border-bottom-color:#666;}
 body[data-theme="default-dark"] a,
 body[data-theme="default-dark"] a:active,
-body[data-theme="default-dark"] a:visited {color:#036C4F;}
-body[data-theme="default-dark"] .button {color:#5F5F5F;background-color: #272727;box-shadow: 0 0 2px rgba(0,0,0,0.8);}
+body[data-theme="default-dark"] a:visited {color:#0084FF;}
+body[data-theme="default-dark"] .button {color:#656565;background-color: #272727;box-shadow: 0 0 2px rgba(0,0,0,0.8);}
 body[data-theme="default-dark"] .button:hover{color:#8b8b8b;background-color:#000;}
-body[data-theme="default-dark"] .button.current {color:#111;background-color:#0E6F3F;box-shadow: 0 0 3px rgba(0,0,0,0.8);}
-body[data-theme="default-dark"] .button.current:hover {background-color:#078B4A;}
+body[data-theme="default-dark"] .button.current {color:#111;background-color:#0084FF;box-shadow: 0 0 3px rgba(0,0,0,0.8);}
+body[data-theme="default-dark"] .button.current:hover {background-color:#0099FF;}
 body[data-theme="default-dark"] .toolbox {background-color: #333;}
-body[data-theme="default-dark"] #query_params > li label {color:#019B71;border:none;background-color: #2D2C2C;}
+body[data-theme="default-dark"] #query_params > li label {color:#1890FF;border:none;background-color: #2D2C2C;}
 body[data-theme="default-dark"] #query_params label:after {color:#666;}
-body[data-theme="default-dark"] #query_params.autocompleteOpen .tt-input {color:#333;background-color: #555;}
+body[data-theme="default-dark"] #query_params .tt-input {color:#e0e0e0;background-color: #111615;}
+body[data-theme="default-dark"] #query_params.autocompleteOpen .tt-input {color:#555;background-color: #222;}
 body[data-theme="default-dark"] #query_params.autocompleteOpen .tt-input.active {color:#000;background-color: #fff;}
-body[data-theme="default-dark"] #query_params .tt-cursor {color:#fff;background-color: #910349;}
+/* selected suggestion in menu */
+body[data-theme="default-dark"] #query_params .tt-cursor,
 body[data-theme="default-dark"] #query_params .tt-suggestion:hover{color:#fff;background-color: #9E024F;}
-body[data-theme="default-dark"] #query_params .tt-highlight {color: #028662};
+/* highlighted query character */
+body[data-theme="default-dark"] #query_params .tt-highlight {color: #9E024F;}
+/* selected suggestion +  highlighted query characters */
 body[data-theme="default-dark"] #query_params .tt-cursor .tt-highlight,
-body[data-theme="default-dark"] #query_params .tt-cursor strong.tt-highlight {color:white} /* this is not working - look into */
-body[data-theme="default-dark"] #generated_url a {color:#DFF2B1;	border-bottom:2px dotted #03743C;}
-body[data-theme="default-dark"] #generated_url .part {color:#008C82;} /* CD0056*/
-body[data-theme="default-dark"] #generated_url .param {color:#05A355;}
-body[data-theme="default-dark"] #generated_url .sep {color:#005144;}
-body[data-theme="default-dark"] #generated_url .eq {color:#006656;}
-body[data-theme="default-dark"] #generated_url a:hover {border-bottom-color: #02A856;}
-body[data-theme="default-dark"] #generated_url a:hover .part {color:#00A196;}
-body[data-theme="default-dark"] #generated_url a:hover .param {color:#03C565;}
-body[data-theme="default-dark"] #generated_url a:hover .sep {color:#02493D;}
-body[data-theme="default-dark"] .url-go {color:#222;background-color: #910349;}
-body[data-theme="default-dark"] .url-go:hover {color:#000;background-color:#B30058;}
+body[data-theme="default-dark"] #query_params .tt-suggestion:hover .tt-highlight {color:#B6FF00;}
+body[data-theme="default-dark"] #generated_url a {color:#DFF2B1;border-bottom:2px dotted #555;}
+body[data-theme="default-dark"] #generated_url .part {color:#ddd;}
+body[data-theme="default-dark"] #generated_url .param {color:#2A98FF;}
+body[data-theme="default-dark"] #generated_url .sep {color:#2EC800;}
+body[data-theme="default-dark"] #generated_url .eq {color:#0068CA;}
+body[data-theme="default-dark"] #generated_url a:hover {border-bottom-color: #777;}
+body[data-theme="default-dark"] #generated_url a:hover .part {color:#fff;}
+body[data-theme="default-dark"] #generated_url a:hover .param {color:#00BDFF;}
+body[data-theme="default-dark"] #generated_url a:hover .sep  {color:#2A870E;}
+body[data-theme="default-dark"] #generated_url a:hover .eq  {color:#006CAB;}
+body[data-theme="default-dark"] a.url-go {color:#000;background-color: #910349;}
+body[data-theme="default-dark"] a.url-go:hover {background-color:#B30058;}
+/* Copy button alert */
+body[data-theme="default-dark"] .url-copy.alerting:before {border-right-color:rgba(255, 255, 255, 0.2);}
+body[data-theme="default-dark"] .url-copy.alerting:after {color:#fff;background-color: rgba(255, 255, 255, 0.2);}
+
+

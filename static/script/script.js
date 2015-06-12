@@ -1,6 +1,75 @@
 $(function(){
 	'use strict';
 
+	var polyfill = {
+		localStorage: function(){
+			if (!window.localStorage) {
+				Object.defineProperty(window, "localStorage", new (function () {
+				var aKeys = [], oStorage = {};
+				Object.defineProperty(oStorage, "getItem", {
+					value: function (sKey) { return sKey ? this[sKey] : null; },
+					writable: false,
+					configurable: false,
+					enumerable: false
+				});
+				Object.defineProperty(oStorage, "key", {
+					value: function (nKeyId) { return aKeys[nKeyId]; },
+					writable: false,
+					configurable: false,
+					enumerable: false
+				});
+				Object.defineProperty(oStorage, "setItem", {
+					value: function (sKey, sValue) {
+						if(!sKey) { return; }
+						document.cookie = escape(sKey) + "=" + escape(sValue) + "; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/";
+					},
+					writable: false,
+					configurable: false,
+					enumerable: false
+				});
+				Object.defineProperty(oStorage, "length", {
+					get: function () { return aKeys.length; },
+					configurable: false,
+					enumerable: false
+				});
+				Object.defineProperty(oStorage, "removeItem", {
+					value: function (sKey) {
+						if(!sKey) { return; }
+						document.cookie = escape(sKey) + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
+					},
+					writable: false,
+					configurable: false,
+					enumerable: false
+				});
+				this.get = function () {
+					var iThisIndx;
+					for (var sKey in oStorage) {
+						iThisIndx = aKeys.indexOf(sKey);
+						if (iThisIndx === -1) { oStorage.setItem(sKey, oStorage[sKey]); }
+						else { aKeys.splice(iThisIndx, 1); }
+						delete oStorage[sKey];
+					}
+					for (aKeys; aKeys.length > 0; aKeys.splice(0, 1)) { oStorage.removeItem(aKeys[0]); }
+						for (var aCouple, iKey, nIdx = 0, aCouples = document.cookie.split(/\s*;\s*/); nIdx < aCouples.length; nIdx++) {
+							aCouple = aCouples[nIdx].split(/\s*=\s*/);
+							if (aCouple.length > 1) {
+								oStorage[iKey = unescape(aCouple[0])] = unescape(aCouple[1]);
+								aKeys.push(iKey);
+							}
+						}
+						return oStorage;
+					};
+					this.configurable = false;
+					this.enumerable = true;
+					console.log()
+				})());
+			}
+		},
+		init: function(){
+			polyfill.localStorage();
+		}
+	};
+
 	var util = {
 		appendHTML: function(child, parent){
 			$(parent).empty().append(child);
@@ -16,6 +85,7 @@ $(function(){
 			return '<' + tag + ' class="' + className + '">' + text + '</' + tag + '>';
 		}
 	};
+
 
 	var full_dataSet = {
 		query_params : {
@@ -41,6 +111,18 @@ $(function(){
 			}
 		}
 	};
+
+	var store = (function(){
+
+		return {
+			length: localStorage.length,
+			set: localStorage.setItem,
+			get: localStorage.getItem,
+			getByIndex: localStorage.key
+			// remove: removeItem,
+			// removeAll: clear
+		};
+	}());
 
 	var dataService = (function(){
 		var data = {
@@ -68,9 +150,15 @@ $(function(){
 		function setValue( category, key, value) {
 			if (value === '') {
 				delete data[category][key];
+				// store.remove(key);
 			} else {
 				data[category][key] = value;
+				// store.set(key, value);
 			}
+		}
+
+		function init() {
+
 		}
 
 		return {
@@ -149,26 +237,25 @@ $(function(){
 		defaults: {
 			filterFn: function(strs) {
 			  return function findMatches(q, cb) {
-			    var matches, substringRegex;
+				var matches, substringRegex;
 
-			    // an array that will be populated with substring matches
-			    matches = [];
+				// an array that will be populated with substring matches
+				matches = [];
 
-			    // regex used to determine if a string contains the substring `q`
+				// regex used to determine if a string contains the substring `q`
 				substringRegex = new RegExp(q, 'i');
 
-			    // iterate through the pool of strings and for any string that
-			    // contains the substring `q`, add it to the `matches` array
-			    $.each(strs, function(i, str) {
-			      if (substringRegex.test(str)) {
-			        matches.push(str);
-			      }
-			    });
+				// iterate through the pool of strings and for any string that
+				// contains the substring `q`, add it to the `matches` array
+				$.each(strs, function(i, str) {
+				  if (substringRegex.test(str)) {
+					matches.push(str);
+				  }
+				});
 
-			    cb(matches);
+				cb(matches);
 			  };
 			},
-
 			handlers: {
 				onActive: function(){},
 				onClose: function(e){},
@@ -178,7 +265,6 @@ $(function(){
 				onSelect: function(){},
 				onChange: function(){}
 			},
-
 			opts: {
 				highlight: true,
 				hint: false,
@@ -186,7 +272,6 @@ $(function(){
 				limit:30
 			}
 		},
-
 		bindOne: function(){
 
 		},
@@ -219,28 +304,23 @@ $(function(){
 			$(document).on('typeahead:idle', handlers.onIdle);
 
 
+			// typeahead events:
 			// these work and are self-explanatory
-			// element.bind('typeahead:idle', handlers.onIdle);
-			// element.bind('typeahead:close', handlers.onClose);
-			// element.bind('typeahead:open', handlers.onOpen);
-			// element.bind('typeahead:render', handlers.onRender);
+			// typeahead:idle, typeahead:close, typeahead:open, typeahead:render
 
 			// these fire when you select with your mouse or arrow keys
-			// element.bind('typeahead:select', function(e){console.log('typeahead:select');});
-			// element.bind('typeahead:selected', function(e){console.log('typeahead:selected');});
+			// typeahead:select, typeahead:selected
 
-			// these fire on TAB select
-			// element.bind('typeahead:autocomplete', function(e){console.log('typeahead:autocomplete');});
-			// element.bind('typeahead:autocompleted', function(e){console.log('typeahead:autocompleted');});
+			// these fire on TAB select, typeahead:autocomplete, typeahead:autocompleted
 
 			// this fires if you change the value then blur but it did NOT autocomplete
-			// element.bind('change', function(e){console.log('plain change event');});
+			// change
 
-			// this fires on focus
-			// element.bind('typeahead:active', function(e){console.log('typeahead:active');});
+			// this fires on focust
+			// typeahead:active
+			
 			// these don't
-			// element.bind('typeahead:change', handlers.onChange);
-			// element.bind('typeahead:changed', function(e){console.log('typeahead:changed');});
+			// typeahead:change, typeahead:changed
 
 		},
 
@@ -434,26 +514,47 @@ $(function(){
 
 	var user_config = {
 		$el: $('.configure'),
-		onChangeTheme: function(){
+		onChangeTheme: function(e){
 			var theme = $(this).data('theme');
-			$('body').attr('data-theme', theme);
+			user_config.setTheme(theme);
 			util.highlightSelected(this);
+		},
+		setTheme: function(theme){
+			theme = theme || 'default-dark';
+			$('body').attr('data-theme', theme);
+			localStorage.setItem('theme', theme);
+			util.highlightSelected( user_config.$el.find('[data-theme="'+ theme +'"]') );
+		},
+		getTheme: function(){
+			var theme = localStorage.getItem('theme');
+			return theme;
 		},
 		bind: function(item){
 			user_config.$el.on('click', '.theme', user_config.onChangeTheme)
 		},
 		init: function(){
 			user_config.bind();
+
+			// Check for previous theme in localStorage
+			var prevTheme = user_config.getTheme();
+			if (prevTheme) user_config.setTheme(prevTheme);
 		}
 
 	};
 
+	var bootstrap = function() {
+		query_params.init( full_dataSet.query_params, dataService.getCategory('query_params') );
+		url_settings.init();
+		url.init();
+		clipboard.init();
+		autocomplete.init();
+		user_config.init();
+			
+	}
+
+	bootstrap();
+
 	// Setup
-	query_params.init( full_dataSet.query_params, dataService.getCategory('query_params') );
-	url_settings.init();
-	url.init();
-	clipboard.init();
-	autocomplete.init();
-	user_config.init();
+
 
 });
