@@ -45,12 +45,11 @@ $(function(){
 	var dataService = (function(){
 		var data = {
 			query_params: {
-				rb: 'fxcm',
-				product: 'fx'
+				rb: 'fxcm'
 			},
 			url_settings: {
-				environment: 'secure9z.fxcorporate.com/tr',
-				protocol: 'http'
+				environment: 'secure4.fxcorporate.com/tr',
+				protocol: 'https'
 			}
 		};
 
@@ -147,72 +146,84 @@ $(function(){
 	*/
 	var autocomplete = {
 
-		substringMatcher: function(strs) {
-		  return function findMatches(q, cb) {
-		    var matches, substringRegex;
+		defaults: {
+			filterFn: function(strs) {
+			  return function findMatches(q, cb) {
+			    var matches, substringRegex;
 
-		    // an array that will be populated with substring matches
-		    matches = [];
+			    // an array that will be populated with substring matches
+			    matches = [];
 
-		    // regex used to determine if a string contains the substring `q`
-			substringRegex = new RegExp(q, 'i');
+			    // regex used to determine if a string contains the substring `q`
+				substringRegex = new RegExp(q, 'i');
 
-		    // iterate through the pool of strings and for any string that
-		    // contains the substring `q`, add it to the `matches` array
-		    $.each(strs, function(i, str) {
-		      if (substringRegex.test(str)) {
-		        matches.push(str);
-		      }
-		    });
+			    // iterate through the pool of strings and for any string that
+			    // contains the substring `q`, add it to the `matches` array
+			    $.each(strs, function(i, str) {
+			      if (substringRegex.test(str)) {
+			        matches.push(str);
+			      }
+			    });
 
-		    cb(matches);
-		  };
+			    cb(matches);
+			  };
+			},
+
+			handlers: {
+				onActive: function(){},
+				onClose: function(e){},
+				onIdle: function(){},
+				onOpen: function(){},
+				onRender: function(){},
+				onSelect: function(){},
+				onChange: function(){}
+			},
+
+			opts: {
+				highlight: true,
+				hint: false,
+				minLength: 0,
+				limit:30
+			}
 		},
 
-		bind: function( element, dataset, callbacks ){
-			var defaults = {
-				callbacks: {
-					onActive: function(){},
-					onClose: function(e){},
-					onIdle: function(){},
-					onOpen: function(){},
-					onRender: function(){},
-					onSelect: function(){},
-					onChange: function(){}
-				},
-				opts: {
-					highlight: true,
-					hint: false,
-					minLength: 0,
-					limit:30
-				}
-			};
+		bindOne: function(){
 
-			element = $(element);
+		},
+		bindAll: function(){
+
+		},
+		bind: function( item, dataset, handlers ){
+			item = $(item);
 			dataset = dataset || [];
-			callbacks = callbacks || {};
-			$.extend(defaults.callbacks, callbacks);
+			handlers = handlers || {};
+			$.extend(autocomplete.defaults.handlers, handlers);
 
 			// attach typeahead functionality
-			element.typeahead(defaults.opts, {
+			item.typeahead(autocomplete.defaults.opts, {
 			  name: 'dataset',
-			  source: autocomplete.substringMatcher(dataset)
+			  source: autocomplete.defaults.filterFn(dataset)
 			});
 
-			element.on('change', callbacks.onChange);
-			element.on('typeahead:active', callbacks.onActive);
-			element.on('typeahead:close', callbacks.onClose);
-			element.on('typeahead:open', callbacks.onOpen);
-			element.on('typeahead:render', callbacks.onRender);
-			element.on('typeahead:select', callbacks.onSelect);
-			element.on('typeahead:idle', callbacks.onIdle);
+			// Attach change handler
+			// Must be attached directly to each instance via native change event
+			// At current time, typeahead's change event is not working
+			// Therefore we cannot use event delegation.
+			item.on('change', handlers.onChange);
+
+			$(document).on('typeahead:active', handlers.onActive);
+			$(document).on('typeahead:close', handlers.onClose);
+			$(document).on('typeahead:open', handlers.onOpen);
+			$(document).on('typeahead:render', handlers.onRender);
+			$(document).on('typeahead:select', handlers.onSelect);
+			$(document).on('typeahead:idle', handlers.onIdle);
 
 
 			// these work and are self-explanatory
-			// element.bind('typeahead:idle', callbacks.onIdle);
-			// element.bind('typeahead:close', callbacks.onClose);
-			// element.bind('typeahead:open', callbacks.onOpen);
-			// element.bind('typeahead:render', callbacks.onRender);
+			// element.bind('typeahead:idle', handlers.onIdle);
+			// element.bind('typeahead:close', handlers.onClose);
+			// element.bind('typeahead:open', handlers.onOpen);
+			// element.bind('typeahead:render', handlers.onRender);
 
 			// these fire when you select with your mouse or arrow keys
 			// element.bind('typeahead:select', function(e){console.log('typeahead:select');});
@@ -228,14 +239,13 @@ $(function(){
 			// this fires on focus
 			// element.bind('typeahead:active', function(e){console.log('typeahead:active');});
 			// these don't
-			// element.bind('typeahead:change', callbacks.onChange);
+			// element.bind('typeahead:change', handlers.onChange);
 			// element.bind('typeahead:changed', function(e){console.log('typeahead:changed');});
 
 		},
 
 		init: function(element){
-			var dataset = full_dataSet.query_params.application_type;
-			autocomplete.bind(element, dataset);
+
 		}
 	};
 
@@ -243,7 +253,7 @@ $(function(){
 		$el: $('ul#query_params'),
 		$items: $(),
 		$deleteElClassName: 'delete',
-		template: _.template('<li><label><%= category %></label> <input type="text" data-category="<%= category %>" value="<%= value %>" /> <div data-action="delete" class="choose delete"><i class="fa fa-times"></i></div></li>'),
+		template: _.template('<li><label><%= category %></label> <input type="text" data-category="<%= category %>" value="<%= value %>" /> <div data-action="delete" class="button round choose delete"><i class="fa fa-times"></i></div></li>'),
 
 		renderAll: function(data, selected){
 			var items = $();
@@ -297,25 +307,28 @@ $(function(){
 		},
 
 		bindOneInput: function( item ){
-
-			autocomplete.bind(item, full_dataSet.query_params[item.data('category')], {
+			var data = full_dataSet.query_params[item.data('category')];
+			var handlers = {
 				onActive: function(){},
 				onChange: function(e){
-					query_params.onUpdate(e.currentTarget);
-					$(e.currentTarget).typeahead('close');
+					var el = $(e.target);
+					query_params.onUpdate(el);
+					$(el).typeahead('close');
 				},
 				onClose: function(e){
-					var el = $(e.currentTarget);
+					var el = $(e.target);
 					el.removeClass('active').closest('ul').removeClass('autocompleteOpen')
 				},
 				onIdle: function(){},
 				onOpen: function(e){
-					var el = $(e.currentTarget);
+					var el = $(e.target);
 					el.addClass('active').closest('ul').addClass('autocompleteOpen')
 				},
 				onRender: function(){},
-				onSelect: function(e){query_params.onUpdate(e.currentTarget);}
-			});
+				onSelect: function(e){query_params.onUpdate(e.target);}
+			};
+
+			autocomplete.bind(item, data, handlers);
 
 		},
 
@@ -385,7 +398,7 @@ $(function(){
 
 		render: function( ){
 			var parts = url.generate();
-			var newHref = parts.protocol + '://' + parts.environment + '/' + $.param(parts.query_params);
+			var newHref = parts.protocol + '://' + parts.environment + '/?' + $.param(parts.query_params);
 			var newEl = $('<a href="' + newHref + '">' + url.constructText(parts, true) + '</a>');
 
 			util.appendHTML(newEl, url.$el);
@@ -419,10 +432,28 @@ $(function(){
 		}
 	};
 
+	var user_config = {
+		$el: $('.configure'),
+		onChangeTheme: function(){
+			var theme = $(this).data('theme');
+			$('body').attr('data-theme', theme);
+			util.highlightSelected(this);
+		},
+		bind: function(item){
+			user_config.$el.on('click', '.theme', user_config.onChangeTheme)
+		},
+		init: function(){
+			user_config.bind();
+		}
+
+	};
+
 	// Setup
 	query_params.init( full_dataSet.query_params, dataService.getCategory('query_params') );
 	url_settings.init();
 	url.init();
 	clipboard.init();
+	autocomplete.init();
+	user_config.init();
 
 });

@@ -27,10 +27,21 @@ input::-ms-clear {
 
 .button {
 	display: inline-block;
+	padding:.75em 1em;
+	line-height:1em;
 	cursor:pointer;
+	text-decoration: none;
 	border-radius:4px;
 }
-
+.button.sm {
+	padding: .3em .5em;
+}
+.button.round {
+	padding:0 .75em;
+	height:28px;
+	line-height:28px;
+	border-radius:100px;
+}
 .toolbox {
 	margin-bottom:1.5em;
 	padding: 2em 2.5em;
@@ -45,7 +56,6 @@ input::-ms-clear {
 /* Group selectors for protocol, environment etc */
 .controls>.button {
 	margin-right: .35em;
-	padding:.35em 1em;
 	font-family:'Opensans-bold', Arial, Helvetica, sans-serif;
 	font-size:14px;
 }
@@ -89,9 +99,7 @@ input::-ms-clear {
 	vertical-align: inherit !important; /* override typeahead's vert align top */
 	border:none;
 }
-#query_params.autocompleteOpen .tt-input {
-	background-color: #555;
-}
+#query_params.autocompleteOpen .tt-input {}
 #query_params.autocompleteOpen .tt-input.active {
 	background-color: #fff;
 }
@@ -135,15 +143,14 @@ input::-ms-clear {
 }
 #query_params .delete {
 	float:right;
-	padding:0 .75em;
-	height:30px;
-	line-height:28px;
-	border-radius:100px;
 }
 
 /* GENERATED URL Styles */
 .urlbox {
 	position: relative;
+}
+#generated_url {
+	margin-bottom: 2em;
 }
 #generated_url a {
 	display: inline;
@@ -154,7 +161,7 @@ input::-ms-clear {
 	text-decoration: none;
 }
 .url-options {
-	margin:0 auto 2em;
+	margin:0 auto .5em;
  }
 .url-options .url-go{
 	display: block;
@@ -196,22 +203,33 @@ input::-ms-clear {
 .url-copy.zeroclipboard-is-hover { text-decoration: none;}
 /*.url-copy.zeroclipboard-is-active { background-color: #aaa; }*/
 
+/* Configuration box */
+.configure {
+	position: absolute;
+	top:2em;
+	right:2em;
+}
+.configure .theme {
+
+}
+.configure .theme.active {
+
+}
+
 /***************** THEMES ******************/
 /* ----- Light ----- */
 body[data-theme="default-light"] {color:#222;background-color: #e8e8e8;}
 body[data-theme="default-light"] h1{color:#222;}
 body[data-theme="default-light"] h3 {color:#222;border-bottom-color: #e3e3e3;}
+body[data-theme="default-light"] .button {color:#8b8b8b;background-color: #e3e3e3;border:2px solid #e3e3e3;}
+body[data-theme="default-light"] .button:hover{color:#fff;border-color:#000;background-color: #000;}
+body[data-theme="default-light"] .button.current {color:#3b9ffb;border-color:#3b9ffb;background-color: #fff;}
 body[data-theme="default-light"] .toolbox {background-color: #f8f8f8;}
-body[data-theme="default-light"] .controls>.button {color:#8b8b8b;background-color: #e3e3e3;border:2px solid #e3e3e3;}
-body[data-theme="default-light"] .controls>.button:hover{color:#fff;border-color:#000;background-color: #000;}
-body[data-theme="default-light"] .controls>.button.current {color:#3b9ffb;border-color:#3b9ffb;background-color: #fff;}
 body[data-theme="default-light"] #query_params > li label {color:#0084ff;border:none;background-color: #dedede;}
 body[data-theme="default-light"] #query_params > li label:after {color:#d2d2d2;}
-body[data-theme="default-light"] #query_params .tt-cursor {color:#fff;background-color: black;}
-body[data-theme="default-light"] #query_params .eq {color:#d2d2d2;}
-body[data-theme="default-light"] #query_params .delete {color:#bebebe;}
-body[data-theme="default-light"] #query_params .delete:hover {	color:#fff;background-color: #E41F71;}
-body[data-theme="default-light"] #query_params .delete:active {color:#777;background-color: #eee;border-color:#aaa;}
+body[data-theme="default-light"] #query_params.autocompleteOpen .tt-input {color:#999;background-color: #ccc;}
+body[data-theme="default-light"] #query_params.autocompleteOpen .tt-input.active {color:#222;background-color: #fff;}
+body[data-theme="default-light"] #query_params .tt-cursor {color:#fff;background-color: #0084FF;}
 body[data-theme="default-light"] #generated_url a {border-bottom:2px dotted #7BBFFD;}
 body[data-theme="default-light"] #generated_url a:hover {border-bottom:2px dotted #309afc;}
 body[data-theme="default-light"] #generated_url .part {color:black;}
@@ -228,22 +246,20 @@ body[data-theme="default-dark"] h3 {color:#888888;border-bottom-color:#666;}
 body[data-theme="default-dark"] a,
 body[data-theme="default-dark"] a:active,
 body[data-theme="default-dark"] a:visited {color:#036C4F;}
+body[data-theme="default-dark"] .button {color:#5F5F5F;background-color: #272727;box-shadow: 0 0 2px rgba(0,0,0,0.8);}
+body[data-theme="default-dark"] .button:hover{color:#8b8b8b;background-color:#000;}
+body[data-theme="default-dark"] .button.current {color:#111;background-color:#0E6F3F;box-shadow: 0 0 3px rgba(0,0,0,0.8);}
+body[data-theme="default-dark"] .button.current:hover {background-color:#078B4A;}
 body[data-theme="default-dark"] .toolbox {background-color: #333;}
-body[data-theme="default-dark"] .controls>.button {color:#5F5F5F;background-color: #272727;box-shadow: 0 0 2px rgba(0,0,0,0.8);}
-body[data-theme="default-dark"] .controls>.button:hover{color:#8b8b8b;background-color:#000;}
-body[data-theme="default-dark"] .controls>.button.current {color:#111;background-color:#006656;box-shadow: 0 0 3px rgba(0,0,0,0.8);}
-body[data-theme="default-dark"] .controls>.button.current:hover {background-color:#0E6F3F;}
 body[data-theme="default-dark"] #query_params > li label {color:#019B71;border:none;background-color: #2D2C2C;}
 body[data-theme="default-dark"] #query_params label:after {color:#666;}
+body[data-theme="default-dark"] #query_params.autocompleteOpen .tt-input {color:#333;background-color: #555;}
+body[data-theme="default-dark"] #query_params.autocompleteOpen .tt-input.active {color:#000;background-color: #fff;}
 body[data-theme="default-dark"] #query_params .tt-cursor {color:#fff;background-color: #910349;}
 body[data-theme="default-dark"] #query_params .tt-suggestion:hover{color:#fff;background-color: #9E024F;}
-body[data-theme="default-dark"] #query_params .tt-highlight {color: #B30058};
+body[data-theme="default-dark"] #query_params .tt-highlight {color: #028662};
 body[data-theme="default-dark"] #query_params .tt-cursor .tt-highlight,
-body[data-theme="default-dark"] #query_params .tt-suggestion:hover .tt-highlight {color:white} /* this is not working - look into */
-body[data-theme="default-dark"] #query_params .eq {color:#d2d2d2;}
-body[data-theme="default-dark"] #query_params .delete {color:#909090;background-color: #222;border:1px solid #222;}
-body[data-theme="default-dark"] #query_params .delete:hover {color:#fff;background-color: #006656;border-color:#042C2C;}
-body[data-theme="default-dark"] #query_params .delete:active {color:#fff;background-color: #58BD74;border-color:#042C2C;}
+body[data-theme="default-dark"] #query_params .tt-cursor strong.tt-highlight {color:white} /* this is not working - look into */
 body[data-theme="default-dark"] #generated_url a {color:#DFF2B1;	border-bottom:2px dotted #03743C;}
 body[data-theme="default-dark"] #generated_url .part {color:#008C82;} /* CD0056*/
 body[data-theme="default-dark"] #generated_url .param {color:#05A355;}
