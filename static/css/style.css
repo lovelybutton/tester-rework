@@ -236,7 +236,8 @@ body[data-theme="default-light"] .button.current:hover {background-color: #0060B
 body[data-theme="default-light"] .toolbox {background-color: #f8f8f8;}
 body[data-theme="default-light"] #query_params > li label {color:#0084ff;border:none;background-color: #dedede;}
 body[data-theme="default-light"] #query_params > li label:after {color:#d2d2d2;}
-body[data-theme="default-light"] #query_params.autocompleteOpen .tt-input {color:#999;background-color: #ccc;}
+body[data-theme="default-light"] #query_params .tt-input {border:1px solid #BFBFBF;}
+body[data-theme="default-light"] #query_params.autocompleteOpen .tt-input {color:#999;background-color: #ccc;border:none;}
 body[data-theme="default-light"] #query_params.autocompleteOpen .tt-input.active {color:#222;background-color: #fff;box-shadow:0 0px 10px rgba(0, 0, 0, 0.3);}
 body[data-theme="default-light"] #query_params .tt-menu{ box-shadow:0 3px 10px rgba(0, 0, 0, 0.3); background-color: #f9f9f9;border-color:#ddd;}
 /* selected suggestion in menu */
