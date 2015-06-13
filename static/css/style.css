@@ -181,30 +181,18 @@ input::-ms-clear {
 	right:0;
 	text-align: center;
 }
-/* TODO: redo this alerting UI. Needs to be reworked */
-.url-options .url-copy.alerting:before {
-	content:"";
+.url-options>.button {
+	position: relative;
+}
+.url-options .alert {
+	display: none; /* hidden on page load so we can fade it in on aftercopy event */
 	position: absolute;
-	left:160px;
-	top:8px;
-	line-height:0;width:0;height:0;
-	border:5px solid transparent;
-	border-right-width:7px;
-	border-right-color:#bbb;
-}
-.url-options .url-copy.alerting:after {
-	content: "copied!";
-	position:absolute;
-	margin-left:10px;
-	color:#fff;
-	font-weight: normal;
-	padding:6px;
+	width: 100%;
+	top: -2.5em;
+	padding: .5em 0;
 	line-height: 1em;
-	border-radius: 6px;
-	color:#fff;
-	background-color: #bbb;
+	border-radius: 7px;
 }
-.url-copy.zeroclipboard-is-hover { text-decoration: none;}
 
 /* Configuration box */
 .configure {
@@ -258,8 +246,7 @@ body[data-theme="default-light"] #generated_url .eq {color:#FF8EBD;}
 body[data-theme="default-light"] .url-go {color:#fff;background-color: #0084FF;}
 body[data-theme="default-light"] .url-go:hover {background-color:#001C35;}
 /* Copy button alert */
-body[data-theme="default-light"] .url-copy.alerting:before {border-right-color:rgba(0,0,0, 0.1);}
-body[data-theme="default-light"] .url-copy.alerting:after {color:#222;background-color: rgba(0,0,0, 0.1);}
+body[data-theme="default-light"] .url-options .alert {background-color: rgba(0,0,0,0.1);}
 
 /* ----- Dark ----- */
 body[data-theme="default-dark"] {color:#ccc;background-color: #111615;}
@@ -276,7 +263,7 @@ body[data-theme="default-dark"] .button.hover{color:#8b8b8b;background-color:#00
 body[data-theme="default-dark"] .button.current {color:#111;background-color:#0084FF;box-shadow: 0 0 3px rgba(0,0,0,0.8);}
 body[data-theme="default-dark"] .button.current:hover {background-color:#0099FF;}
 /* button contrast style - sits directly on the background */
-body[data-theme="default-dark"] .button-contrast {color:#6E6E6E;background-color: transparent;}
+body[data-theme="default-dark"] .button-contrast {color:#6E6E6E;background-color: transparent;box-shadow: none;}
 body[data-theme="default-dark"] .button-contrast:hover,
 body[data-theme="default-dark"] .button-contrast.hover {color:#bbb;background-color:transparent;}
 body[data-theme="default-dark"] .button-contrast.current:hover,
@@ -308,5 +295,4 @@ body[data-theme="default-dark"] #generated_url a:hover .eq  {color:#006CAB;}
 body[data-theme="default-dark"] a.url-go {color:#000;background-color: #910349;}
 body[data-theme="default-dark"] a.url-go:hover {background-color:#B30058;}
 /* Copy button alert */
-body[data-theme="default-dark"] .url-copy.alerting:before {border-right-color:rgba(255, 255, 255, 0.2);}
-body[data-theme="default-dark"] .url-copy.alerting:after {color:#fff;background-color: rgba(255, 255, 255, 0.2);}
+body[data-theme="default-dark"] .url-options .alert {background-color: rgba(255,255,255,0.2);}

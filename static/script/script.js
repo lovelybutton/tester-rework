@@ -444,7 +444,7 @@ $(function(){
 			url.$exportLink.attr('data-clipboard-text', exportHref );
 			url.$goLink.attr('href', href);
 
-		}, 300),
+		}, 200),
 
 		init: function(){
 			url.render();
@@ -452,6 +452,8 @@ $(function(){
 	};
 
 	var clipboard = {
+		$alertElTemplate: _.template('<div class="alert"><strong><%= alertLabel %></strong> copied to your clipboard <i class="fa fa-smile-o"></i></div>'),
+
 		init: function(){
 			ZeroClipboard.config({
 				swfPath: "static/vendor/ZeroClipboard/ZeroClipboard.swf",
@@ -459,19 +461,18 @@ $(function(){
 			});
 			var client = new ZeroClipboard( $('[data-action="copy"]') );
 
-			client.on( "ready", function( readyEvent ) {
-				client.on( "aftercopy", function( event ){
-					//TODO: This is a crude way of alerting the user that text has been copied. Rework
-					$(event.target).addClass('alerting');
-					var timeoutID = window.setTimeout(function(){
-						$(event.target).removeClass('alerting');
-					}, 2000);
+			client.on( "ready", function(readyEvent) {
 
-					event.preventDefault;
+				client.on( "aftercopy", function(e){
+					var element = $(e.target);
+					var alertElement = $(clipboard.$alertElTemplate({alertLabel: element.data('alert-label')}));
 
-					// this -> client
-					// event.target -> the element that was clicked
-					// event.data["text/plain"] -> text that was copied
+					// Display an alert indicating success
+					element.parent().prepend(alertElement);
+					alertElement.fadeIn('fast').delay(1000).fadeOut('linear');
+
+					// in case we decide to use an <a>
+					e.preventDefault;
 				});
 			});
 		}
