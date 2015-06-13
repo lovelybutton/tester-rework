@@ -498,6 +498,10 @@ $(function(){
 	};
 
 	var bootstrap = function() {
+		// determine which data to use for preselecting
+		// first check query string. If anything exists there, use that.
+		// if no query string values exist, use the default (hardcoded) values
+
 		query_params.init( full_dataSet.query_params, dataService.getCategory('query_params') );
 		url_settings.init();
 		url.init();
