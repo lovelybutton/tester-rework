@@ -7,7 +7,7 @@
 
 	<link rel="stylesheet" href="http://assets.fxcm.com/css/global.css">
 	<link rel="stylesheet" href="static/css/style.css">
-	<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" >
 </head>
 <bodydata-theme="default-dark">
 	<div id="global_container">
@@ -19,9 +19,10 @@
 						<div class="urlbox">
 							<section class="toolbox">
 								<div id="generated_url"></div>
+								<a class="url-go" href="#" target="_blank">Go to URL <i class="fa fa-external-link"></i></a>
 								<div class="url-options">
-									<a class="url-go" href="#" target="_blank">Go to URL <i class="fa fa-external-link"></i></a>
-									<a class="url-copy" href="#">Copy URL to clipboard <i class="fa fa-copy"></i></a>
+									<div data-action="copy" class="button button-contrast url-export"><i class="fa fa-share-alt"></i> Export share link</div>
+									<div data-action="copy" class="button button-contrast url-copy"><i class="fa fa-plus-circle"></i> Copy URL</div>
 								</div>
 							</section>
 						</div>
@@ -64,8 +65,8 @@
 			<div class="configure">
 				<div class="theme-switcher">
 					Select a theme: <br>
-					<a data-theme="default-dark" class="button sm theme current">Dark</a>
-					<a data-theme="default-light" class="button sm theme">Light</a>
+					<span data-theme="default-dark" class="button button-small button-contrast theme current">Dark</span>
+					<span data-theme="default-light" class="button button-small button-contrast theme">Light</span>
 				</div>
 			</div>
 		</div>

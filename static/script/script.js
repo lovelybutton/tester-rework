@@ -274,7 +274,7 @@ $(function(){
 		$el: $('ul#params'),
 		$items: $(),
 		deleteElClass: 'delete',
-		template: _.template('<li><label><%= category %></label> <input type="text" data-category="<%= category %>" value="<%= value %>" /> <div data-action="delete" class="button round choose delete"><i class="fa fa-times"></i></div></li>'),
+		template: _.template('<li><label><%= category %></label> <input type="text" data-category="<%= category %>" value="<%= value %>" /> <div data-action="delete" class="button button-round choose delete"><i class="fa fa-times"></i></div></li>'),
 
 		renderAll: function(data, selected){
 			var items = $();
@@ -378,6 +378,7 @@ $(function(){
 		$el: $('#generated_url'),
 		$goLink: $('.url-go'),
 		$copyLink: $('.url-copy'),
+		$exportLink: $('.url-export'),
 
 		generate: function(){
 			var generated = {};
@@ -431,12 +432,17 @@ $(function(){
 
 		render: _.debounce(function(){
 			var parts = url.generate();
-			var newHref = parts.protocol + '://' + parts.environment + '/?' + $.param(parts.params);
-			var newEl = $('<a href="' + newHref + '">' + url.constructText(parts, true) + '</a>');
+			var queryString = '?' + $.param(parts.params);
+			var href = parts.protocol + '://' + parts.environment + '/' + queryString;
+			var anchor = $('<a href="' + href + '">' + url.constructText(parts, true) + '</a>');
 
-			util.appendHTML(newEl, url.$el);
-			url.$copyLink.attr('data-clipboard-text', newHref);
-			url.$goLink.attr('href', newHref);
+			// ensure export url is clean - no query strings or hashes stowing a ride
+			var exportHref = document.location.protocol + document.location.host + document.location.pathname  + queryString;
+
+			util.appendHTML(anchor, url.$el);
+			url.$copyLink.attr('data-clipboard-text', href);
+			url.$exportLink.attr('data-clipboard-text', exportHref );
+			url.$goLink.attr('href', href);
 
 		}, 300),
 
@@ -447,8 +453,11 @@ $(function(){
 
 	var clipboard = {
 		init: function(){
-			ZeroClipboard.config( { swfPath: "static/vendor/ZeroClipboard/ZeroClipboard.swf" } );
-			var client = new ZeroClipboard( $('.url-copy') );
+			ZeroClipboard.config({
+				swfPath: "static/vendor/ZeroClipboard/ZeroClipboard.swf",
+				hoverClass: 'hover'
+			});
+			var client = new ZeroClipboard( $('[data-action="copy"]') );
 
 			client.on( "ready", function( readyEvent ) {
 				client.on( "aftercopy", function( event ){
