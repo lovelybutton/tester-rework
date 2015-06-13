@@ -275,7 +275,7 @@ $(function(){
 				highlight: true,
 				hint: false,
 				minLength: 0,
-				limit:30
+				limit:10
 			}
 		},
 		bindOne: function(){
@@ -292,7 +292,6 @@ $(function(){
 
 			// attach typeahead functionality
 			item.typeahead(autocomplete.defaults.opts, {
-			  name: 'dataset',
 			  source: autocomplete.defaults.filterFn(dataset)
 			});
 
@@ -324,7 +323,7 @@ $(function(){
 
 			// this fires on focust
 			// typeahead:active
-			
+
 			// these don't
 			// typeahead:change, typeahead:changed
 
@@ -411,7 +410,9 @@ $(function(){
 					el.addClass('active').closest('ul').addClass('autocompleteOpen')
 				},
 				onRender: function(){},
-				onSelect: function(e){query_params.onUpdate(e.target);}
+				onSelect: function(e){
+					query_params.onUpdate(e.target);
+				}
 			};
 
 			autocomplete.bind(item, data, handlers);
@@ -482,7 +483,7 @@ $(function(){
 			return serialized;
 		},
 
-		render: function( ){
+		render: _.debounce(function(){
 			var parts = url.generate();
 			var newHref = parts.protocol + '://' + parts.environment + '/?' + $.param(parts.query_params);
 			var newEl = $('<a href="' + newHref + '">' + url.constructText(parts, true) + '</a>');
@@ -490,7 +491,8 @@ $(function(){
 			util.appendHTML(newEl, url.$el);
 			url.$copyLink.attr('data-clipboard-text', newHref);
 			url.$goLink.attr('href', newHref);
-		},
+
+		}, 300),
 
 		init: function(){
 			url.render();
@@ -555,7 +557,7 @@ $(function(){
 		clipboard.init();
 		autocomplete.init();
 		user_config.init();
-			
+
 	}
 
 	bootstrap();
