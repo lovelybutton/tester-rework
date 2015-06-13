@@ -482,7 +482,7 @@ $(function(){
 			var anchor = $('<a href="' + href + '">' + url.constructText(parts, true) + '</a>');
 
 			// ensure export url is clean - no query strings or hashes stowing a ride
-			var exportHref = document.location.protocol + document.location.host + document.location.pathname  + queryString;
+			var exportHref = document.location.protocol + '//' + document.location.host + document.location.pathname  + queryString;
 
 			util.appendHTML(anchor, url.$el);
 			url.$copyLink.attr('data-clipboard-text', href);

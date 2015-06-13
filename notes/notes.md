@@ -10,11 +10,12 @@ Brief explanation of scope for each branch/version
 ###To dos:
 - Set up simple API/endpoint with PHP and possibly some file system files.
 - **User view**
-   1. Preview/display environment value when hovering and selecting an environment button
+   1. Url properties (env and protocol) are not prepopulated from the page's query string. Fix.
    1. Create persistence within browser, either with localStorage or by writing selected values to page's queryString.
    1. Decide what to do about tracking params checkbox
    1. Think about reworking UI so that a longer URL doesn't push all the content down.
    1. Remove dependencies on fxcm libs and markup structure.
+   1. **DONE** <s>Preview/display environment value when hovering and selecting an environment button</s>
    1. **DONE** <s>On page load, check for provided values in page's query string</s>
       - Merge these values with the hard-coded default values in the script (or, supplant default values with this - yes that makes sense). So:
       * User lands on page with NO values in query string: load hard-coded default
