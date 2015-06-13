@@ -1,0 +1,51 @@
+// Using typeahead: http://twitter.github.io/typeahead.js/examples/
+// https://github.com/twitter/typeahead.js
+
+/*
+I'll need these API methods:
+
+
+$('.exampleEl').typeahead('val');
+$('.exampleEl').typeahead('val', myVal);
+$('.exampleEl').typeahead('open');
+$('.exampleEl').typeahead('close');
+
+// bind to typeahead event
+$('.exampleEl').bind('typeahead:select', function(ev, suggestion) {
+   console.log('Selection: ' + suggestion);
+});
+
+// other events:
+typeahead:active
+typeahead:idle
+typeahead:open // fires when results container opens
+typeahead:close
+typeahead:change
+typeahead:render
+typeahead:select // fires when a suggestion is selected
+* typeahead:autocomplete // fires when an autocomplete occurs
+
+opts.source =
+function (query, syncResults, asyncResults)
+
+
+*/
+
+
+// typeahead events:
+// these work and are self-explanatory
+// typeahead:idle, typeahead:close, typeahead:open, typeahead:render
+
+// these fire when you select with your mouse or arrow keys
+// typeahead:select, typeahead:selected
+
+// these fire on TAB select, typeahead:autocomplete, typeahead:autocompleted
+
+// this fires if you change the value then blur but it did NOT autocomplete
+// change
+
+// this fires on focust
+// typeahead:active
+
+// these don't
+// typeahead:change, typeahead:changed

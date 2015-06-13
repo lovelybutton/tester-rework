@@ -100,11 +100,6 @@ $(function(){
 			service_level: ['1', '2', '3', '4']
 		},
 
-
-
-
-
-
 		url_settings : {
 			'environment': {
 				qa:	'secure9x.fxcorporate.com/tr',
@@ -206,62 +201,32 @@ $(function(){
 		}
 	};
 
-	// Using typeahead: http://twitter.github.io/typeahead.js/examples/
-	// https://github.com/twitter/typeahead.js
-
-	/*
-	I'll need these API methods:
-
-
-	$('.exampleEl').typeahead('val');
-	$('.exampleEl').typeahead('val', myVal);
-	$('.exampleEl').typeahead('open');
-	$('.exampleEl').typeahead('close');
-
-	// bind to typeahead event
-	$('.exampleEl').bind('typeahead:select', function(ev, suggestion) {
-		console.log('Selection: ' + suggestion);
-	});
-
-	// other events:
-	typeahead:active
-	typeahead:idle
-	typeahead:open // fires when results container opens
-	typeahead:close
-	typeahead:change
-	typeahead:render
-	typeahead:select // fires when a suggestion is selected
-	* typeahead:autocomplete // fires when an autocomplete occurs
-
-	opts.source =
-	function (query, syncResults, asyncResults)
-
-
-	*/
 	var autocomplete = {
 
 		defaults: {
 			filterFn: function(strs) {
-			  return function findMatches(q, cb) {
-				var matches, substringRegex;
+				return function findMatches(q, cb) {
+					var matches, substringRegex;
 
-				// an array that will be populated with substring matches
-				matches = [];
+					// an array that will be populated with substring matches
+					matches = [];
 
-				// regex used to determine if a string contains the substring `q`
-				substringRegex = new RegExp(q, 'i');
+					// regex used to determine if a string contains the substring `q`
+					substringRegex = new RegExp(q, 'i');
 
-				// iterate through the pool of strings and for any string that
-				// contains the substring `q`, add it to the `matches` array
-				$.each(strs, function(i, str) {
-				  if (substringRegex.test(str)) {
-					matches.push(str);
-				  }
-				});
+					// iterate through the pool of strings and for any string that
+					// contains the substring `q`, add it to the `matches` array
+					$.each(strs, function(i, str) {
+						if (substringRegex.test(str)) {
+							matches.push(str);
+						}
+					});
 
-				cb(matches);
-			  };
+					cb(matches);
+				};
 			},
+
+
 			handlers: {
 				onActive: function(){},
 				onClose: function(e){},
@@ -274,8 +239,8 @@ $(function(){
 			opts: {
 				highlight: true,
 				hint: false,
-				minLength: 0,
-				limit:10
+				limit:10,
+				minLength:0
 			}
 		},
 		bindOne: function(){
@@ -292,7 +257,7 @@ $(function(){
 
 			// attach typeahead functionality
 			item.typeahead(autocomplete.defaults.opts, {
-			  source: autocomplete.defaults.filterFn(dataset)
+				source: autocomplete.defaults.filterFn(dataset),
 			});
 
 			// Attach change handler
@@ -307,27 +272,7 @@ $(function(){
 			$(document).on('typeahead:render', handlers.onRender);
 			$(document).on('typeahead:select', handlers.onSelect);
 			$(document).on('typeahead:idle', handlers.onIdle);
-
-
-			// typeahead events:
-			// these work and are self-explanatory
-			// typeahead:idle, typeahead:close, typeahead:open, typeahead:render
-
-			// these fire when you select with your mouse or arrow keys
-			// typeahead:select, typeahead:selected
-
-			// these fire on TAB select, typeahead:autocomplete, typeahead:autocompleted
-
-			// this fires if you change the value then blur but it did NOT autocomplete
-			// change
-
-			// this fires on focust
-			// typeahead:active
-
-			// these don't
-			// typeahead:change, typeahead:changed
-
-		},
+	},
 
 		init: function(element){
 
@@ -511,6 +456,8 @@ $(function(){
 					var timeoutID = window.setTimeout(function(){
 						$(event.target).removeClass('alerting');
 					}, 2000);
+
+					event.preventDefault;
 
 					// this -> client
 					// event.target -> the element that was clicked

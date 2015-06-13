@@ -300,5 +300,3 @@ body[data-theme="default-dark"] a.url-go:hover {background-color:#B30058;}
 /* Copy button alert */
 body[data-theme="default-dark"] .url-copy.alerting:before {border-right-color:rgba(255, 255, 255, 0.2);}
 body[data-theme="default-dark"] .url-copy.alerting:after {color:#fff;background-color: rgba(255, 255, 255, 0.2);}
-
-
