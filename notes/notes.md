@@ -15,6 +15,10 @@ Brief explanation of scope for each branch/version
       * User lands on page with NO values in query string: load hard-coded default
       * User lands on page WITH values in query string: use those instead
    3. Decide if I should be updating the query string as we go along or just provide an "export URL" button. I kinda already have this in the form of the "copy url" button. Hmm. Can I repurpose this? It will be more involved but better UI to update the page's query string as we go along. Maybe consider this a next-phase item.
+   4. Fix "copied!" alert
+   5. Implement environment url preview on hover and on select
+   6. Decide what to do about tracking params Checkbox
+   7. Think about reworking UI so that a longer URL doesn't push all the content down.
 
 
 #Views:
