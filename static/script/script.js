@@ -356,6 +356,7 @@ $(function(){
 
 		init: function( data, defaults, queryString ){
 			var items;
+			var defaults = _.clone(defaults); // clone defaults so that we don't inadvertently corrupt it when merging it with queryString
 
 			// Check query string for default values
 			// If exist, merge with defaults
@@ -452,7 +453,7 @@ $(function(){
 	};
 
 	var clipboard = {
-		$alertElTemplate: _.template('<div class="alert"><strong><%= alertLabel %></strong> copied to your clipboard <i class="fa fa-smile-o"></i></div>'),
+		$alertElTemplate: _.template('<div class="alert"><i class="<%= iconClass %>"></i> <%= alertLabel %> copied to your clipboard :)</div>'),
 
 		init: function(){
 			ZeroClipboard.config({
@@ -465,7 +466,10 @@ $(function(){
 
 				client.on( "aftercopy", function(e){
 					var element = $(e.target);
-					var alertElement = $(clipboard.$alertElTemplate({alertLabel: element.data('alert-label')}));
+					var alertElement = $(clipboard.$alertElTemplate({
+						alertLabel: element.data('alert-label'),
+						iconClass: element.find('i').attr('class')
+					}));
 
 					// Display an alert indicating success
 					element.parent().prepend(alertElement);
