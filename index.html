@@ -30,12 +30,12 @@
 								<section class="toolbox first">
 									<h3>Query parameters</h3>
 									<form name="tr-tester">
-										<ul id="query_params"></ul>
+										<ul id="params"></ul>
 									</form>
 									<p>Note: Parameters will only be added to URL if there is a value set.</p>
 								</section>
 							</div>
-							<div class="unit size1of3" id="url_settings">
+							<div class="unit size1of3" id="urlProperties">
 								<section class="toolbox contains-3 has-gutter gutter-md">
 									<h3>Protocol</h3>
 									<ul class="controls" id="protocol">
@@ -63,7 +63,7 @@
 			</section>
 			<div class="configure">
 				<div class="theme-switcher">
-					Select a theme:
+					Select a theme: <br>
 					<a data-theme="default-dark" class="button sm theme current">Dark</a>
 					<a data-theme="default-light" class="button sm theme">Light</a>
 				</div>
@@ -71,6 +71,7 @@
 		</div>
 	</div>
 	<script src="static/vendor/jquery/jquery.min.js"></script>
+	<script src="static/vendor/skinnyjs/skinnyjs.queryString.min.js"></script>
 	<script src="static/vendor/underscore/underscore-min.js"></script>
 	<script src="static/vendor/ZeroClipboard/ZeroClipboard.min.js"></script>
 	<script src="static/vendor/typeahead/typeahead.bundle.min.js"></script>

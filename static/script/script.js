@@ -86,9 +86,8 @@ $(function(){
 		}
 	};
 
-
-	var full_dataSet = {
-		query_params : {
+	var allData = {
+		params : {
 			application_type: ['corporate','ira','trust','partnership','llc','individual','joint'],
 			ccy: ['aud','cad','chf','eur','gbp','hkd','jpy','nzd','usd'],
 			country: ['afghanistan','albania','algeria','american_samoa','andorra','angola','anguilla','antigua_and_barbuda','argentina','armenia','aruba','austria','azerbaijan','bahamas','bahrain','bangladesh','barbados','belgium','belize','benin','bermuda','bhutan','bolivia','bosnia_and_herzegovina','botswana','british_virgin_islands','brunei','bulgaria','burkina_faso','burundi','cambodia','cameroon','cape_verde_islands','cayman_islands','central_african_republic','chad','chile','china','colombia','comoros','costa_rica','croatia','cyprus','czech_republic','denmark','djibouti','dominica','dominican_republic','ecuador','egypt','el_salvador','equatorial_guinea','eritrea','estonia','ethiopia','falkland_islands','faroe_islands','fiji','finland','france','gabon','gambia','georgia','germany','ghana','gibraltar','greece','greenland','grenada','guam','guatemala','guinea','guinea','guyana','haiti','honduras','hungary','iceland','india','indonesia','iraq','ireland','isle_of_man','israel','italy','jamaica','jordan','kazakhstan','kenya','kiribati','kuwait','kyrgyzstan','laos','latvia','lebanon','lesotho','liechtenstein','lithuania','luxembourg','macao','macedonia','madagascar','malawi','malaysia','maldives','mali','malta','marshall','mauritania','mauritius','mexico','micronesia','moldova','monaco','mongolia','montenegro','morocco','mozambique','namibia','nauru','nepal','netherlands','netherlands_antilles','new_zealand','nicaragua','niger','nigeria','northern_mariana_islands','norway','oman','pakistan','palau','panama','papua_new_guinea','paraguay','peru','philippines','poland','portugal','puerto_rico','qatar','romania','russia','rwanda','saint_kitts_and_nevis','saint_lucia','saint_vincent','samoa','san_marino','sao_tome_and_principe','saudi_arabia','senegal','serbia','seychelles','sierra_leone','slovak_republic','slovenia','solomon_islands','south_africa','spain','sri_lanka','st_helena','suriname','swaziland','sweden','switzerland','taiwan','tajikistan','tanzania','thailand','togo','tonga','trinidad_and_tobago','tunisia','turkey','turkmenistan','turks_and_caicos','tuvalu','uganda','ukraine','united_arab_emirates','united_kingdom','united_states','uruguay','uzbekistan','vanuatu','venezuela','vietnam','virgin_islands_us','yemen','zambia'],
@@ -100,7 +99,7 @@ $(function(){
 			service_level: ['1', '2', '3', '4']
 		},
 
-		url_settings : {
+		urlProperties : {
 			'environment': {
 				qa:	'secure9x.fxcorporate.com/tr',
 				uat: 'secure9z.fxcorporate.com/tr',
@@ -125,12 +124,12 @@ $(function(){
 		};
 	}());
 
-	var dataService = (function(){
+	var viewModel = (function(){
 		var data = {
-			query_params: {
+			params: {
 				rb: 'fxcm'
 			},
-			url_settings: {
+			urlProperties: {
 				environment: 'secure4.fxcorporate.com/tr',
 				protocol: 'https'
 			}
@@ -158,6 +157,10 @@ $(function(){
 			}
 		}
 
+		function getDefaultValues (){
+
+		}
+
 		function init() {
 
 		}
@@ -170,12 +173,12 @@ $(function(){
 		};
 	}());
 
-	var url_settings = {
-		$el: $('#url_settings'),
+	var urlProperties = {
+		$el: $('#urlProperties'),
 
 		bind: function(){
-			url_settings.$el.on('click', '.button', function(){
-				url_settings.onSelect(this);
+			urlProperties.$el.on('click', '.button', function(){
+				urlProperties.onSelect(this);
 			});
 		},
 
@@ -184,17 +187,17 @@ $(function(){
 			var value = $(element).attr('data-value');
 
 			util.highlightSelected(element);
-			dataService.set('url_settings', category, value);
+			viewModel.set('urlProperties', category, value);
 			url.render();
 		},
 
 		init: function(){
-			url_settings.bind();
+			urlProperties.bind();
 
-			var settings = dataService.getCategory('url_settings');
+			var settings = viewModel.getCategory('urlProperties');
 
 			_.each( settings, function(value, category){
-				var el = url_settings.$el.find('.button[data-value="'+ value +'"]');
+				var el = urlProperties.$el.find('.button[data-value="'+ value +'"]');
 
 				util.highlightSelected(el);
 			});
@@ -225,8 +228,6 @@ $(function(){
 					cb(matches);
 				};
 			},
-
-
 			handlers: {
 				onActive: function(){},
 				onClose: function(e){},
@@ -242,12 +243,6 @@ $(function(){
 				limit:10,
 				minLength:0
 			}
-		},
-		bindOne: function(){
-
-		},
-		bindAll: function(){
-
 		},
 		bind: function( item, dataset, handlers ){
 			item = $(item);
@@ -272,17 +267,13 @@ $(function(){
 			$(document).on('typeahead:render', handlers.onRender);
 			$(document).on('typeahead:select', handlers.onSelect);
 			$(document).on('typeahead:idle', handlers.onIdle);
-	},
-
-		init: function(element){
-
 		}
 	};
 
-	var query_params = {
-		$el: $('ul#query_params'),
+	var params = {
+		$el: $('ul#params'),
 		$items: $(),
-		$deleteElClassName: 'delete',
+		deleteElClass: 'delete',
 		template: _.template('<li><label><%= category %></label> <input type="text" data-category="<%= category %>" value="<%= value %>" /> <div data-action="delete" class="button round choose delete"><i class="fa fa-times"></i></div></li>'),
 
 		renderAll: function(data, selected){
@@ -299,7 +290,7 @@ $(function(){
 				}
 
 				// append newly-prepared item to set
-				items = items.add(query_params.template({category: category, value: finalValue }));
+				items = items.add(params.template({category: category, value: finalValue }));
 			});
 
 			return items;
@@ -309,40 +300,40 @@ $(function(){
 			element = $(element) || $('div');
 			var category = element.attr('data-category');
 			var value = element.val();
-			var data = dataService.getCategory(query_params);
+			var data = viewModel.getCategory(params);
 
 			// update selected data according to new value
-			dataService.set('query_params', category, value);
+			viewModel.set('params', category, value);
 
 			url.render();
 		},
 
 		bindDeleteButton: function(){
 			// Set up the delete button handler
-			query_params.$el.on('click', '.delete', function(e){
+			params.$el.on('click', '.' + params.deleteElClass, function(e){
 				var currentParam = $(e.target).closest('li').find('input');
 
 				// clear the associated input and regenerate the URL
 				if (currentParam.typeahead('val') !== ''){
 					currentParam.typeahead('val', '');
-					query_params.onUpdate(currentParam);
+					params.onUpdate(currentParam);
 				}
 			});
 		},
 
 		bindInputs: function( items ){
 			items.each(function(){
-				query_params.bindOneInput($(this).find('input'));
+				params.bindOneInput($(this).find('input'));
 			});
 		},
 
 		bindOneInput: function( item ){
-			var data = full_dataSet.query_params[item.data('category')];
+			var data = allData.params[item.data('category')];
 			var handlers = {
 				onActive: function(){},
 				onChange: function(e){
 					var el = $(e.target);
-					query_params.onUpdate(el);
+					params.onUpdate(el);
 					$(el).typeahead('close');
 				},
 				onClose: function(e){
@@ -356,20 +347,30 @@ $(function(){
 				},
 				onRender: function(){},
 				onSelect: function(e){
-					query_params.onUpdate(e.target);
+					params.onUpdate(e.target);
 				}
 			};
 
 			autocomplete.bind(item, data, handlers);
-
 		},
 
-		init: function( full_dataSet, selected ){
-			var items = query_params.renderAll(full_dataSet, selected);
-			query_params.bindInputs( items );
-			util.appendHTML(items, query_params.$el);
+		init: function( data, defaults, queryString ){
+			var items;
 
-			query_params.bindDeleteButton();
+			// Check query string for default values
+			// If exist, merge with defaults
+			if(queryString) {
+				queryString = $.deparam(queryString);
+				$.extend(defaults, queryString);
+			}
+
+			// render the param items
+			var items = params.renderAll(data, defaults);
+
+			// bind handlers and attach to DOM
+			params.bindInputs( items );
+			params.bindDeleteButton();
+			util.appendHTML(items, params.$el);
 		}
 	};
 
@@ -380,9 +381,9 @@ $(function(){
 
 		generate: function(){
 			var generated = {};
-			generated.protocol = dataService.getOne( 'url_settings', 'protocol' );
-			generated.environment = dataService.getOne( 'url_settings', 'environment' );
-			generated.query_params = dataService.getCategory( 'query_params' );
+			generated.protocol = viewModel.getOne( 'urlProperties', 'protocol' );
+			generated.environment = viewModel.getOne( 'urlProperties', 'environment' );
+			generated.params = viewModel.getCategory( 'params' );
 
 			return generated;
 		},
@@ -391,7 +392,7 @@ $(function(){
 			var prettyText = [];
 			var protocol = urlParts.protocol;
 			var environment = urlParts.environment;
-			var params = urlParts.query_params;
+			var params = urlParts.params;
 
 			// protocol
 			prettyText.push( util.wrapTag(protocol, 'part') );
@@ -430,7 +431,7 @@ $(function(){
 
 		render: _.debounce(function(){
 			var parts = url.generate();
-			var newHref = parts.protocol + '://' + parts.environment + '/?' + $.param(parts.query_params);
+			var newHref = parts.protocol + '://' + parts.environment + '/?' + $.param(parts.params);
 			var newEl = $('<a href="' + newHref + '">' + url.constructText(parts, true) + '</a>');
 
 			util.appendHTML(newEl, url.$el);
@@ -467,48 +468,47 @@ $(function(){
 		}
 	};
 
-	var user_config = {
+	var config = {
 		$el: $('.configure'),
 		onChangeTheme: function(e){
 			var theme = $(this).data('theme');
-			user_config.setTheme(theme);
+			config.setTheme(theme);
 			util.highlightSelected(this);
 		},
 		setTheme: function(theme){
 			theme = theme || 'default-dark';
 			$('body').attr('data-theme', theme);
 			localStorage.setItem('theme', theme);
-			util.highlightSelected( user_config.$el.find('[data-theme="'+ theme +'"]') );
+			util.highlightSelected( config.$el.find('[data-theme="'+ theme +'"]') );
 		},
 		getTheme: function(){
 			var theme = localStorage.getItem('theme');
 			return theme;
 		},
 		bind: function(item){
-			user_config.$el.on('click', '.theme', user_config.onChangeTheme)
+			config.$el.on('click', '.theme', config.onChangeTheme)
 		},
 		init: function(){
-			user_config.bind();
+			config.bind();
 
 			// Check for previous theme in localStorage
-			var prevTheme = user_config.getTheme();
-			if (prevTheme) user_config.setTheme(prevTheme);
+			var prevTheme = config.getTheme();
+			if (prevTheme) config.setTheme(prevTheme);
 		}
 
 	};
 
 	var bootstrap = function() {
-		// determine which data to use for preselecting
-		// first check query string. If anything exists there, use that.
-		// if no query string values exist, use the default (hardcoded) values
+		var data = allData.params;
+		var defaults = viewModel.getCategory('params');
+		var queryString = document.location.search;
 
-		query_params.init( full_dataSet.query_params, dataService.getCategory('query_params') );
-		url_settings.init();
+		params.init(data, defaults, queryString);
+
+		urlProperties.init();
 		url.init();
 		clipboard.init();
-		autocomplete.init();
-		user_config.init();
-
+		config.init();
 	}
 
 	bootstrap();

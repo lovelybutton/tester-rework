@@ -3,7 +3,9 @@
 Brief explanation of scope for each branch/version
 
 ##v1.1-add-url-importing
-In this branch, I'm going to build out the ability for the user to export their choices as a url that can be shared or bookmarked
+- added skinny.js's queryString module
+- You can now prepopulate certain values by putting them in the page's url:
+    url-builder/?country=united_states
 
 ###To dos:
 - Set up simple API/endpoint with PHP and possibly some file system files.
