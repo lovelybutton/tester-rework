@@ -61,7 +61,6 @@ $(function(){
 					};
 					this.configurable = false;
 					this.enumerable = true;
-					console.log()
 				})());
 			}
 		},
@@ -101,9 +100,9 @@ $(function(){
 
 		urlProperties : {
 			'environment': {
-				qa:	'secure9x.fxcorporate.com/tr',
-				uat: 'secure9z.fxcorporate.com/tr',
-				prod: 'secure4.fxcorporate.com/tr'
+				qa:	'secure9x.fxcorporate.com/tr/',
+				uat: 'secure9z.fxcorporate.com/tr/',
+				prod: 'secure4.fxcorporate.com/tr/'
 			},
 			'protocol': {
 				https: 'https',
@@ -130,7 +129,7 @@ $(function(){
 				rb: 'fxcm'
 			},
 			urlProperties: {
-				environment: 'secure4.fxcorporate.com/tr',
+				environment: 'secure4.fxcorporate.com/tr/',
 				protocol: 'https'
 			}
 		};
@@ -157,14 +156,6 @@ $(function(){
 			}
 		}
 
-		function getDefaultValues (){
-
-		}
-
-		function init() {
-
-		}
-
 		return {
 			getOne: getOne,
 			getCategory: getCategory,
@@ -175,20 +166,71 @@ $(function(){
 
 	var urlProperties = {
 		$el: $('#urlProperties'),
+		logElClass: '.log',
+		logTemplate: _.template('<strong>URL:</strong> <span class="url"> <%= activeUrl %></span>'),
+		timeoutID: '',
 
-		bind: function(){
-			urlProperties.$el.on('click', '.button', function(){
-				urlProperties.onSelect(this);
-			});
+		updateLogWithValue: function(value, event){
+			var log = $(urlProperties.logElClass);
+			var markup = urlProperties.logTemplate({activeUrl: value });
+
+			// Cancel any previous timeouts that may be around
+			window.clearTimeout(urlProperties.timeoutID);
+
+			// Update value
+			// We're adding a class "hover" if the user is just hovering for a preview and not clicking
+			// We also build in a tiny delay on mouseout to prevent flickering when the mouse hovers over a row of buttons
+			if (event === 'mouseout') {
+				// timeout here
+				urlProperties.timeoutID = setTimeout(function(){
+					log.removeClass('hover');
+					log.html(markup);
+				}, 100);
+			} else if (event === 'mouseover') {
+				log.addClass('hover');
+				log.html(markup);
+			} else if (event === 'click'){
+				log.removeClass('hover');
+				log.html(markup);
+			}
+		},
+
+		onMouseOver: function(element){
+			// Preview the value of the button we're hovering over now
+			urlProperties.updateLogWithValue($(element).data('value'), 'mouseover');
+		},
+		onMouseOut: function(element){
+			urlProperties.updateLogWithValue($(element).data('value'), 'mouseout');
 		},
 
 		onSelect: function(element){
 			var category = $(element).attr('data-category');
 			var value = $(element).attr('data-value');
 
+			// Update viewModel and view
 			util.highlightSelected(element);
 			viewModel.set('urlProperties', category, value);
+			urlProperties.updateLogWithValue(value, 'click');
 			url.render();
+		},
+
+		bind: function(){
+			urlProperties.$el.on('click mouseover mouseout', '.button', function(e){
+				switch(e.type){
+					case 'click':
+						urlProperties.onSelect(this);
+						break;
+
+					case 'mouseover':
+						urlProperties.onMouseOver(this);
+						break;
+
+					case 'mouseout':
+					urlProperties.onMouseOut(this);
+						break;
+				}
+				e.preventDefault;
+			});
 		},
 
 		init: function(){
@@ -201,6 +243,9 @@ $(function(){
 
 				util.highlightSelected(el);
 			});
+
+			// Set log value on page load
+			urlProperties.updateLogWithValue(settings.environment, 'click');
 		}
 	};
 
@@ -273,7 +318,7 @@ $(function(){
 	var params = {
 		$el: $('ul#params'),
 		$items: $(),
-		deleteElClass: 'delete',
+		deleteElClass: '.delete',
 		template: _.template('<li><label><%= category %></label> <input type="text" data-category="<%= category %>" value="<%= value %>" /> <div data-action="delete" class="button button-round choose delete"><i class="fa fa-times"></i></div></li>'),
 
 		renderAll: function(data, selected){
@@ -310,7 +355,7 @@ $(function(){
 
 		bindDeleteButton: function(){
 			// Set up the delete button handler
-			params.$el.on('click', '.' + params.deleteElClass, function(e){
+			params.$el.on('click', params.deleteElClass, function(e){
 				var currentParam = $(e.target).closest('li').find('input');
 
 				// clear the associated input and regenerate the URL
@@ -402,7 +447,6 @@ $(function(){
 
 			// environment
 			prettyText.push( util.wrapTag(environment, 'part') );
-			prettyText.push( util.wrapTag('/', 'part') );
 			prettyText.push( util.wrapTag('?', 'sep') );
 
 			// query params
@@ -434,7 +478,7 @@ $(function(){
 		render: _.debounce(function(){
 			var parts = url.generate();
 			var queryString = '?' + $.param(parts.params);
-			var href = parts.protocol + '://' + parts.environment + '/' + queryString;
+			var href = parts.protocol + '://' + parts.environment + queryString;
 			var anchor = $('<a href="' + href + '">' + url.constructText(parts, true) + '</a>');
 
 			// ensure export url is clean - no query strings or hashes stowing a ride
