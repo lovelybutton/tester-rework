@@ -282,7 +282,7 @@ body[data-theme="default-light"] #generated_url .eq {color:#FF8EBD;}
 body[data-theme="default-light"] a.url-go {color:#fff;background-color: #0084FF;}
 body[data-theme="default-light"] a.url-go:hover {background-color:#001C35;}
 /* Copy button alert */
-body[data-theme="default-light"] .url-options .alert {background-color: rgba(0,0,0,0.1);}
+body[data-theme="default-light"] .url-options .alert {background-color: #D0D0D0;box-shadow:0 0 3px 1px rgba(255,255,255,.08)};
 body[data-theme="default-light"] .configure .url-options {border-color: #aaa}
 
 
