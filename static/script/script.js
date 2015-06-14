@@ -1,6 +1,10 @@
 $(function(){
 	'use strict';
 
+	/* --------------------------------------
+	/* Utilities and Helpers
+	/* -------------------------------------- */
+
 	var polyfill = {
 		localStorage: function(){
 			if (!window.localStorage) {
@@ -85,6 +89,147 @@ $(function(){
 		}
 	};
 
+
+	/* --------------------------------------
+	/* UI configuration
+	/* -------------------------------------- */
+
+	var config = {
+		$el: $('.configure'),
+		onChangeTheme: function(e){
+			var theme = $(this).data('theme');
+			config.setTheme(theme);
+			util.highlightSelected(this);
+		},
+		setTheme: function(theme){
+			theme = theme || 'default-dark';
+			$('body').attr('data-theme', theme);
+			localStorage.setItem('theme', theme);
+			util.highlightSelected( config.$el.find('[data-theme="'+ theme +'"]') );
+		},
+		getTheme: function(){
+			var theme = localStorage.getItem('theme');
+			return theme;
+		},
+		bind: function(item){
+			config.$el.on('click', '.theme', config.onChangeTheme)
+		},
+		init: function(){
+			config.bind();
+
+			// Check for previous theme in localStorage
+			var prevTheme = config.getTheme();
+			if (prevTheme) config.setTheme(prevTheme);
+		}
+
+	};
+
+
+	/* --------------------------------------
+	/* Plugins
+	/* -------------------------------------- */
+
+	var clipboard = {
+		$alertElTemplate: _.template('<div class="alert"><i class="<%= iconClass %>"></i> <%= alertLabel %> copied to your clipboard :)</div>'),
+
+		init: function(){
+			ZeroClipboard.config({
+				swfPath: "static/vendor/ZeroClipboard/ZeroClipboard.swf",
+				hoverClass: 'hover'
+			});
+			var client = new ZeroClipboard( $('[data-action="copy"]') );
+
+			client.on( "ready", function(readyEvent) {
+
+				client.on( "aftercopy", function(e){
+					var element = $(e.target);
+					var alertElement = $(clipboard.$alertElTemplate({
+						alertLabel: element.data('alert-label'),
+						iconClass: element.find('i').attr('class')
+					}));
+
+					// Display an alert indicating success
+					element.parent().prepend(alertElement);
+					alertElement.fadeIn('fast').delay(1000).fadeOut('linear');
+
+					// in case we decide to use an <a>
+					e.preventDefault;
+				});
+			});
+		}
+	};
+
+	var autocomplete = {
+
+		defaults: {
+			filterFn: function(strs) {
+				return function findMatches(q, cb) {
+					var matches, substringRegex;
+
+					// an array that will be populated with substring matches
+					matches = [];
+
+					// regex used to determine if a string contains the substring `q`
+					substringRegex = new RegExp(q, 'i');
+
+					// iterate through the pool of strings and for any string that
+					// contains the substring `q`, add it to the `matches` array
+					$.each(strs, function(i, str) {
+						if (substringRegex.test(str)) {
+							matches.push(str);
+						}
+					});
+
+					cb(matches);
+				};
+			},
+			handlers: {
+				onActive: function(){},
+				onClose: function(e){},
+				onIdle: function(){},
+				onOpen: function(){},
+				onRender: function(){},
+				onSelect: function(){},
+				onChange: function(){}
+			},
+			opts: {
+				highlight: true,
+				hint: false,
+				limit:10,
+				minLength:0
+			}
+		},
+		bind: function( item, dataset, handlers ){
+			item = $(item);
+			dataset = dataset || [];
+			handlers = handlers || {};
+			$.extend(autocomplete.defaults.handlers, handlers);
+
+			// attach typeahead functionality
+			item.typeahead(autocomplete.defaults.opts, {
+				source: autocomplete.defaults.filterFn(dataset),
+			});
+
+			// Attach change handler
+			// Must be attached directly to each instance via native change event
+			// At current time, typeahead's change event is not working
+			// Therefore we cannot use event delegation.
+			item.on('change', handlers.onChange);
+
+			$(document).on('typeahead:active', handlers.onActive);
+			$(document).on('typeahead:close', handlers.onClose);
+			$(document).on('typeahead:open', handlers.onOpen);
+			$(document).on('typeahead:render', handlers.onRender);
+			$(document).on('typeahead:select', handlers.onSelect);
+			$(document).on('typeahead:idle', handlers.onIdle);
+		}
+	};
+
+
+	/* --------------------------------------
+	/* Models
+	/* -------------------------------------- */
+
 	var allData = {
 		params : {
 			application_type: ['corporate','ira','trust','partnership','llc','individual','joint'],
@@ -164,397 +309,282 @@ $(function(){
 		};
 	}());
 
-	var urlProperties = {
-		$el: $('#urlProperties'),
-		logElClass: '.log',
-		logTemplate: _.template('<strong>URL:</strong> <span class="url"> <%= activeUrl %></span>'),
-		timeoutID: '',
 
-		updateLogWithValue: function(value, event){
-			var log = $(urlProperties.logElClass);
-			var markup = urlProperties.logTemplate({activeUrl: value });
 
-			// Cancel any previous timeouts that may be around
-			window.clearTimeout(urlProperties.timeoutID);
+		/* --------------------------------------
+		/* Views
+		/* -------------------------------------- */
 
-			// Update value
-			// We're adding a class "hover" if the user is just hovering for a preview and not clicking
-			// We also build in a tiny delay on mouseout to prevent flickering when the mouse hovers over a row of buttons
-			if (event === 'mouseout') {
-				// timeout here
-				urlProperties.timeoutID = setTimeout(function(){
+		var urlProperties = {
+			$el: $('#urlProperties'),
+			logElClass: '.log',
+			logTemplate: _.template('<strong>URL:</strong> <span class="url"> <%= activeUrl %></span>'),
+			timeoutID: '',
+
+			updateLogWithValue: function(value, event){
+				var log = $(urlProperties.logElClass);
+				var markup = urlProperties.logTemplate({activeUrl: value });
+
+				// Cancel any previous timeouts that may be around
+				window.clearTimeout(urlProperties.timeoutID);
+
+				// Update value
+				// We're adding a class "hover" if the user is just hovering for a preview and not clicking
+				// We also build in a tiny delay on mouseout to prevent flickering when the mouse hovers over a row of buttons
+				if (event === 'mouseout') {
+					// timeout here
+					urlProperties.timeoutID = setTimeout(function(){
+						log.removeClass('hover');
+						log.html(markup);
+					}, 100);
+				} else if (event === 'mouseover') {
+					log.addClass('hover');
+					log.html(markup);
+				} else if (event === 'click'){
 					log.removeClass('hover');
 					log.html(markup);
-				}, 100);
-			} else if (event === 'mouseover') {
-				log.addClass('hover');
-				log.html(markup);
-			} else if (event === 'click'){
-				log.removeClass('hover');
-				log.html(markup);
-			}
-		},
-
-		onMouseOver: function(element){
-			// Preview the value of the button we're hovering over now
-			urlProperties.updateLogWithValue($(element).data('value'), 'mouseover');
-		},
-		onMouseOut: function(element){
-			urlProperties.updateLogWithValue($(element).data('value'), 'mouseout');
-		},
-
-		onSelect: function(element){
-			var category = $(element).attr('data-category');
-			var value = $(element).attr('data-value');
-
-			// Update viewModel and view
-			util.highlightSelected(element);
-			viewModel.set('urlProperties', category, value);
-			urlProperties.updateLogWithValue(value, 'click');
-			url.render();
-		},
-
-		bind: function(){
-			urlProperties.$el.on('click mouseover mouseout', '.button', function(e){
-				switch(e.type){
-					case 'click':
-						urlProperties.onSelect(this);
-						break;
-
-					case 'mouseover':
-						urlProperties.onMouseOver(this);
-						break;
-
-					case 'mouseout':
-					urlProperties.onMouseOut(this);
-						break;
 				}
-				e.preventDefault;
-			});
-		},
-
-		init: function(){
-			urlProperties.bind();
-
-			var settings = viewModel.getCategory('urlProperties');
-
-			_.each( settings, function(value, category){
-				var el = urlProperties.$el.find('.button[data-value="'+ value +'"]');
-
-				util.highlightSelected(el);
-			});
-
-			// Set log value on page load
-			urlProperties.updateLogWithValue(settings.environment, 'click');
-		}
-	};
-
-	var autocomplete = {
-
-		defaults: {
-			filterFn: function(strs) {
-				return function findMatches(q, cb) {
-					var matches, substringRegex;
-
-					// an array that will be populated with substring matches
-					matches = [];
-
-					// regex used to determine if a string contains the substring `q`
-					substringRegex = new RegExp(q, 'i');
-
-					// iterate through the pool of strings and for any string that
-					// contains the substring `q`, add it to the `matches` array
-					$.each(strs, function(i, str) {
-						if (substringRegex.test(str)) {
-							matches.push(str);
-						}
-					});
-
-					cb(matches);
-				};
 			},
-			handlers: {
-				onActive: function(){},
-				onClose: function(e){},
-				onIdle: function(){},
-				onOpen: function(){},
-				onRender: function(){},
-				onSelect: function(){},
-				onChange: function(){}
+
+			onMouseOver: function(element){
+				// Preview the value of the button we're hovering over now
+				urlProperties.updateLogWithValue($(element).data('value'), 'mouseover');
 			},
-			opts: {
-				highlight: true,
-				hint: false,
-				limit:10,
-				minLength:0
-			}
-		},
-		bind: function( item, dataset, handlers ){
-			item = $(item);
-			dataset = dataset || [];
-			handlers = handlers || {};
-			$.extend(autocomplete.defaults.handlers, handlers);
+			onMouseOut: function(element){
+				urlProperties.updateLogWithValue($(element).data('value'), 'mouseout');
+			},
 
-			// attach typeahead functionality
-			item.typeahead(autocomplete.defaults.opts, {
-				source: autocomplete.defaults.filterFn(dataset),
-			});
+			onSelect: function(element){
+				var category = $(element).attr('data-category');
+				var value = $(element).attr('data-value');
 
-			// Attach change handler
-			// Must be attached directly to each instance via native change event
-			// At current time, typeahead's change event is not working
-			// Therefore we cannot use event delegation.
-			item.on('change', handlers.onChange);
+				// Update viewModel and view
+				util.highlightSelected(element);
+				viewModel.set('urlProperties', category, value);
+				url.render();
 
-			$(document).on('typeahead:active', handlers.onActive);
-			$(document).on('typeahead:close', handlers.onClose);
-			$(document).on('typeahead:open', handlers.onOpen);
-			$(document).on('typeahead:render', handlers.onRender);
-			$(document).on('typeahead:select', handlers.onSelect);
-			$(document).on('typeahead:idle', handlers.onIdle);
-		}
-	};
-
-	var params = {
-		$el: $('ul#params'),
-		$items: $(),
-		deleteElClass: '.delete',
-		template: _.template('<li><label><%= category %></label> <input type="text" data-category="<%= category %>" value="<%= value %>" /> <div data-action="delete" class="button button-round choose delete"><i class="fa fa-times"></i></div></li>'),
-
-		renderAll: function(data, selected){
-			var items = $();
-
-			// render all items and set values if provided
-			_.each( data, function(value, category, obj){
-				var finalValue = '';
-				var el;
-
-				// check if we have a preselected value or not
-				if ( _.has(selected, category) ) {
-					finalValue = selected[category];
+				if (category === 'environment') {
+					urlProperties.updateLogWithValue(value, 'click');
 				}
+			},
 
-				// append newly-prepared item to set
-				items = items.add(params.template({category: category, value: finalValue }));
-			});
-
-			return items;
-		},
-
-		onUpdate: function(element){
-			element = $(element) || $('div');
-			var category = element.attr('data-category');
-			var value = element.val();
-			var data = viewModel.getCategory(params);
-
-			// update selected data according to new value
-			viewModel.set('params', category, value);
-
-			url.render();
-		},
-
-		bindDeleteButton: function(){
-			// Set up the delete button handler
-			params.$el.on('click', params.deleteElClass, function(e){
-				var currentParam = $(e.target).closest('li').find('input');
-
-				// clear the associated input and regenerate the URL
-				if (currentParam.typeahead('val') !== ''){
-					currentParam.typeahead('val', '');
-					params.onUpdate(currentParam);
-				}
-			});
-		},
-
-		bindInputs: function( items ){
-			items.each(function(){
-				params.bindOneInput($(this).find('input'));
-			});
-		},
-
-		bindOneInput: function( item ){
-			var data = allData.params[item.data('category')];
-			var handlers = {
-				onActive: function(){},
-				onChange: function(e){
-					var el = $(e.target);
-					params.onUpdate(el);
-					$(el).typeahead('close');
-				},
-				onClose: function(e){
-					var el = $(e.target);
-					el.removeClass('active').closest('ul').removeClass('autocompleteOpen')
-				},
-				onIdle: function(){},
-				onOpen: function(e){
-					var el = $(e.target);
-					el.addClass('active').closest('ul').addClass('autocompleteOpen')
-				},
-				onRender: function(){},
-				onSelect: function(e){
-					params.onUpdate(e.target);
-				}
-			};
-
-			autocomplete.bind(item, data, handlers);
-		},
-
-		init: function( data, defaults, queryString ){
-			var items;
-			var defaults = _.clone(defaults); // clone defaults so that we don't inadvertently corrupt it when merging it with queryString
-
-			// Check query string for default values
-			// If exist, merge with defaults
-			if(queryString) {
-				queryString = $.deparam(queryString);
-				$.extend(defaults, queryString);
-			}
-
-			// render the param items
-			var items = params.renderAll(data, defaults);
-
-			// bind handlers and attach to DOM
-			params.bindInputs( items );
-			params.bindDeleteButton();
-			util.appendHTML(items, params.$el);
-		}
-	};
-
-	var url = {
-		$el: $('#generated_url'),
-		$goLink: $('.url-go'),
-		$copyLink: $('.url-copy'),
-		$exportLink: $('.url-export'),
-
-		generate: function(){
-			var generated = {};
-			generated.protocol = viewModel.getOne( 'urlProperties', 'protocol' );
-			generated.environment = viewModel.getOne( 'urlProperties', 'environment' );
-			generated.params = viewModel.getCategory( 'params' );
-
-			return generated;
-		},
-
-		constructText: function(urlParts, pretty) {
-			var prettyText = [];
-			var protocol = urlParts.protocol;
-			var environment = urlParts.environment;
-			var params = urlParts.params;
-
-			// protocol
-			prettyText.push( util.wrapTag(protocol, 'part') );
-			prettyText.push( util.wrapTag('://', 'sep') );
-
-			// environment
-			prettyText.push( util.wrapTag(environment, 'part') );
-			prettyText.push( util.wrapTag('?', 'sep') );
-
-			// query params
-			prettyText.push(url.serializeParams(params, pretty));
-
-			return prettyText.join("");
-
-		},
-
-		serializeParams: function(params, pretty){
-			// Returns params either serialized as a valid query param string or wrapped in syntax spans for visual display
-			// pretty is a boolean value that when true, wraps the param parts in decorative spans
-			var serialized;
-			var part = '';
-
-			if (pretty) {
-				serialized = [];
-				for (var param in params){
-					part = util.wrapTag(param, 'param') + util.wrapTag('=', 'eq') + util.wrapTag(params[param], 'param');
-					serialized.push(part);
-				}
-				serialized = serialized.join(util.wrapTag('&', 'sep'));
-			} else {
-				serialized = $.param(params);
-			}
-			return serialized;
-		},
-
-		render: _.debounce(function(){
-			var parts = url.generate();
-			var queryString = '?' + $.param(parts.params);
-			var href = parts.protocol + '://' + parts.environment + queryString;
-			var anchor = $('<a href="' + href + '">' + url.constructText(parts, true) + '</a>');
-
-			// ensure export url is clean - no query strings or hashes stowing a ride
-			var exportHref = document.location.protocol + '//' + document.location.host + document.location.pathname  + queryString;
-
-			util.appendHTML(anchor, url.$el);
-			url.$copyLink.attr('data-clipboard-text', href);
-			url.$exportLink.attr('data-clipboard-text', exportHref );
-			url.$goLink.attr('href', href);
-
-		}, 200),
-
-		init: function(){
-			url.render();
-		}
-	};
-
-	var clipboard = {
-		$alertElTemplate: _.template('<div class="alert"><i class="<%= iconClass %>"></i> <%= alertLabel %> copied to your clipboard :)</div>'),
-
-		init: function(){
-			ZeroClipboard.config({
-				swfPath: "static/vendor/ZeroClipboard/ZeroClipboard.swf",
-				hoverClass: 'hover'
-			});
-			var client = new ZeroClipboard( $('[data-action="copy"]') );
-
-			client.on( "ready", function(readyEvent) {
-
-				client.on( "aftercopy", function(e){
-					var element = $(e.target);
-					var alertElement = $(clipboard.$alertElTemplate({
-						alertLabel: element.data('alert-label'),
-						iconClass: element.find('i').attr('class')
-					}));
-
-					// Display an alert indicating success
-					element.parent().prepend(alertElement);
-					alertElement.fadeIn('fast').delay(1000).fadeOut('linear');
-
-					// in case we decide to use an <a>
+			bind: function(){
+				urlProperties.$el.on('click', '[data-category="environment"], [data-category="protocol"]', function(e){
+					urlProperties.onSelect(this);
 					e.preventDefault;
 				});
-			});
-		}
-	};
 
-	var config = {
-		$el: $('.configure'),
-		onChangeTheme: function(e){
-			var theme = $(this).data('theme');
-			config.setTheme(theme);
-			util.highlightSelected(this);
-		},
-		setTheme: function(theme){
-			theme = theme || 'default-dark';
-			$('body').attr('data-theme', theme);
-			localStorage.setItem('theme', theme);
-			util.highlightSelected( config.$el.find('[data-theme="'+ theme +'"]') );
-		},
-		getTheme: function(){
-			var theme = localStorage.getItem('theme');
-			return theme;
-		},
-		bind: function(item){
-			config.$el.on('click', '.theme', config.onChangeTheme)
-		},
-		init: function(){
-			config.bind();
+				urlProperties.$el.on('mouseover mouseout', '[data-category="environment"]', function(e){
+					switch(e.type){
+						case 'mouseover':
+							urlProperties.onMouseOver(this);
+							break;
 
-			// Check for previous theme in localStorage
-			var prevTheme = config.getTheme();
-			if (prevTheme) config.setTheme(prevTheme);
-		}
+						case 'mouseout':
+						urlProperties.onMouseOut(this);
+							break;
+					}
+					e.preventDefault;
+				});
+			},
 
-	};
+			init: function(){
+				urlProperties.bind();
+
+				var settings = viewModel.getCategory('urlProperties');
+
+				_.each( settings, function(value, category){
+					var el = urlProperties.$el.find('.button[data-value="'+ value +'"]');
+
+					util.highlightSelected(el);
+				});
+
+				// Set log value on page load
+				urlProperties.updateLogWithValue(settings.environment, 'click');
+			}
+		};
+		var params = {
+			$el: $('ul#params'),
+			$items: $(),
+			deleteElClass: '.delete',
+			template: _.template('<li><label><%= category %></label> <input type="text" data-category="<%= category %>" value="<%= value %>" /> <div data-action="delete" class="button button-round choose delete"><i class="fa fa-times"></i></div></li>'),
+
+			renderAll: function(data, selected){
+				var items = $();
+
+				// render all items and set values if provided
+				_.each( data, function(value, category, obj){
+					var finalValue = '';
+					var el;
+
+					// check if we have a preselected value or not
+					if ( _.has(selected, category) ) {
+						finalValue = selected[category];
+					}
+
+					// append newly-prepared item to set
+					items = items.add(params.template({category: category, value: finalValue }));
+				});
+
+				return items;
+			},
+
+			onUpdate: function(element){
+				element = $(element);
+
+				var category = element.attr('data-category');
+				var value = element.val();
+
+				// update selected data according to new value
+				viewModel.set('params', category, value);
+
+				url.render();
+			},
+
+			bindDeleteButton: function(){
+				// Set up the delete button handler
+				params.$el.on('click', params.deleteElClass, function(e){
+					var currentParam = $(e.target).closest('li').find('input');
+
+					// clear the associated input and regenerate the URL
+					if (currentParam.typeahead('val') !== ''){
+						currentParam.typeahead('val', '');
+						params.onUpdate(currentParam);
+					}
+				});
+			},
+
+			bindInputs: function( items ){
+				items.each(function(){
+					params.bindOneInput($(this).find('input'));
+				});
+			},
+
+			bindOneInput: function( item ){
+				var data = allData.params[item.data('category')];
+				var handlers = {
+					onActive: function(){},
+					onChange: function(e){
+						var el = $(e.target);
+						params.onUpdate(el);
+						$(el).typeahead('close');
+					},
+					onClose: function(e){
+						var el = $(e.target);
+						el.removeClass('active').closest('ul').removeClass('autocompleteOpen')
+					},
+					onIdle: function(){},
+					onOpen: function(e){
+						var el = $(e.target);
+						el.addClass('active').closest('ul').addClass('autocompleteOpen')
+					},
+					onRender: function(){},
+					onSelect: function(e){
+						params.onUpdate(e.target);
+					}
+				};
+
+				autocomplete.bind(item, data, handlers);
+			},
+
+			init: function( data, defaults, queryString ){
+				var items;
+				var defaults = _.clone(defaults); // clone defaults so that we don't inadvertently corrupt it when merging it with queryString
+
+				// Check query string for default values
+				// If exist, merge with defaults
+				if(queryString) {
+					queryString = $.deparam(queryString);
+					$.extend(defaults, queryString);
+				}
+
+				// render the param items
+				var items = params.renderAll(data, defaults);
+
+				// bind handlers and attach to DOM
+				params.bindInputs( items );
+				params.bindDeleteButton();
+				util.appendHTML(items, params.$el);
+			}
+		};
+
+		var url = {
+			$el: $('#generated_url'),
+			$goLink: $('.url-go'),
+			$copyLink: $('.url-copy'),
+			$exportLink: $('.url-export'),
+
+			generate: function(){
+				var generated = {};
+				generated.protocol = viewModel.getOne( 'urlProperties', 'protocol' );
+				generated.environment = viewModel.getOne( 'urlProperties', 'environment' );
+				generated.params = viewModel.getCategory( 'params' );
+
+				return generated;
+			},
+			constructText: function(urlParts, pretty) {
+				var prettyText = [];
+				var protocol = urlParts.protocol;
+				var environment = urlParts.environment;
+				var params = urlParts.params;
+
+				// protocol
+				prettyText.push( util.wrapTag(protocol, 'part') );
+				prettyText.push( util.wrapTag('://', 'sep') );
+
+				// environment
+				prettyText.push( util.wrapTag(environment, 'part') );
+				prettyText.push( util.wrapTag('?', 'sep') );
+
+				// query params
+				prettyText.push(url.serializeParams(params, pretty));
+
+				return prettyText.join("");
+
+			},
+			serializeParams: function(params, pretty){
+				// Returns params either serialized as a valid query param string or wrapped in syntax spans for visual display
+				// pretty is a boolean value that when true, wraps the param parts in decorative spans
+				var serialized;
+				var part = '';
+
+				if (pretty) {
+					serialized = [];
+					for (var param in params){
+						part = util.wrapTag(param, 'param') + util.wrapTag('=', 'eq') + util.wrapTag(params[param], 'param');
+						serialized.push(part);
+					}
+					serialized = serialized.join(util.wrapTag('&', 'sep'));
+				} else {
+					serialized = $.param(params);
+				}
+				return serialized;
+			},
+			render: _.debounce(function(){
+				var parts = url.generate();
+				var queryString = '?' + $.param(parts.params);
+				var href = parts.protocol + '://' + parts.environment + queryString;
+				var anchor = $('<a href="' + href + '">' + url.constructText(parts, true) + '</a>');
+
+				// ensure export url is clean - no query strings or hashes stowing a ride
+				var exportHref = document.location.protocol + '//' + document.location.host + document.location.pathname  + queryString;
+
+				util.appendHTML(anchor, url.$el);
+				url.$copyLink.attr('data-clipboard-text', href);
+				url.$exportLink.attr('data-clipboard-text', exportHref );
+				url.$goLink.attr('href', href);
+
+			}, 200),
+
+			init: function(){
+				url.render();
+			}
+		};
+
+
+	/* --------------------------------------
+	/* Bootstrap
+	/* -------------------------------------- */
 
 	var bootstrap = function() {
 		var data = allData.params;

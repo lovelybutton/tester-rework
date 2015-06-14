@@ -11,6 +11,11 @@ Brief explanation of scope for each branch/version
 - Set up simple API/endpoint with PHP and possibly some file system files.
 - **User view**
    1. Url properties (env and protocol) are not prepopulated from the page's query string. Fix.
+      - need to rethink structure of the default data within viewModel. Right now it's split up by param and url property but I think I need to make it a flat list, mirroring what a query string would look like when deparamed.
+      - Then I have to change the interface for getting and setting the view model.
+      - Then I need to solve for the fact that the environment is a nested key/value pair.
+      - Then I need to make sure that on page load, the queryString values actually update the viewModel in memory.
+      - Probably missing something here.
    1. Create persistence within browser, either with localStorage or by writing selected values to page's queryString.
    1. Decide what to do about tracking params checkbox
    1. Think about reworking UI so that a longer URL doesn't push all the content down.
