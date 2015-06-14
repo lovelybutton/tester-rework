@@ -303,4 +303,4 @@ body[data-theme="default-dark"] #generated_url a:hover .eq  {color:#006CAB;}
 body[data-theme="default-dark"] a.url-go {color:#000;background-color: #910349;}
 body[data-theme="default-dark"] a.url-go:hover {background-color:#B30058;}
 /* Copy button alert */
-body[data-theme="default-dark"] .url-options .alert {background-color: rgba(255,255,255,0.2);}
+body[data-theme="default-dark"] .url-options .alert {background-color: #404443;}

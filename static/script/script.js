@@ -130,7 +130,8 @@ $(function(){
 	/* -------------------------------------- */
 
 	var clipboard = {
-		$alertElTemplate: _.template('<div class="alert"><i class="<%= iconClass %>"></i> <%= alertLabel %> copied to your clipboard :)</div>'),
+		$alertElTemplate: _.template('<div class="alert"><%= alertLabel %> copied to your clipboard <i class="<%= iconClass %>"></i> </div>'),
+		timerID: '',
 
 		init: function(){
 			ZeroClipboard.config({
@@ -142,15 +143,30 @@ $(function(){
 			client.on( "ready", function(readyEvent) {
 
 				client.on( "aftercopy", function(e){
+					// TODO - clean up this logic. Messy!
+
 					var element = $(e.target);
+					var parent = element.parent();
 					var alertElement = $(clipboard.$alertElTemplate({
 						alertLabel: element.data('alert-label'),
 						iconClass: element.find('i').attr('class')
 					}));
+					var prevAlert = parent.find('.' + alertElement.attr('class'));
 
+					// Clear out previous alerts if they are still running
+					window.clearTimeout(clipboard.timeoutID);
+					if(prevAlert.length){
+						prevAlert.fadeOut('fast');
+					}
 					// Display an alert indicating success
-					element.parent().prepend(alertElement);
-					alertElement.fadeIn('fast').delay(1000).fadeOut('linear');
+					parent.prepend(alertElement);
+
+					alertElement.fadeIn('fast');
+					clipboard.timeoutID = setTimeout(function(){
+						alertElement.fadeOut('linear', function(){
+							$(this).remove();
+						});
+					}, 1000);
 
 					// in case we decide to use an <a>
 					e.preventDefault;
@@ -160,7 +176,6 @@ $(function(){
 	};
 
 	var autocomplete = {
-
 		defaults: {
 			filterFn: function(strs) {
 				return function findMatches(q, cb) {
@@ -230,7 +245,7 @@ $(function(){
 	/* Models
 	/* -------------------------------------- */
 
-	var allData = {
+	var model = {
 		params : {
 			application_type: ['corporate','ira','trust','partnership','llc','individual','joint'],
 			ccy: ['aud','cad','chf','eur','gbp','hkd','jpy','nzd','usd'],
@@ -279,25 +294,23 @@ $(function(){
 			}
 		};
 
-		function getOne(category, key) {
-			return data && data[category] && data[category][key] || false;
+		function getOne(type, key) {
+			return data && data[type] && data[type][key] || false;
 		}
 
-		function getCategory(category, key) {
-			return data && data[category] || false;
+		function getCategory(type, key) {
+			return data && data[type] || false;
 		}
 
 		function getAll() {
 			return data;
 		}
 
-		function setValue( category, key, value) {
+		function setValue(type, key, value) {
 			if (value === '') {
-				delete data[category][key];
-				// store.remove(key);
+				delete data[type][key];
 			} else {
-				data[category][key] = value;
-				// store.set(key, value);
+				data[type][key] = value;
 			}
 		}
 
@@ -311,275 +324,298 @@ $(function(){
 
 
 
-		/* --------------------------------------
-		/* Views
-		/* -------------------------------------- */
+	/* --------------------------------------
+	/* Views
+	/* -------------------------------------- */
 
-		var urlProperties = {
-			$el: $('#urlProperties'),
-			logElClass: '.log',
-			logTemplate: _.template('<strong>URL:</strong> <span class="url"> <%= activeUrl %></span>'),
-			timeoutID: '',
+	var urlProperties = {
+		$el: $('#urlProperties'),
+		logElClass: '.log',
+		logTemplate: _.template('<strong>URL:</strong> <span class="url"> <%= activeUrl %></span>'),
+		timeoutID: '',
 
-			updateLogWithValue: function(value, event){
-				var log = $(urlProperties.logElClass);
-				var markup = urlProperties.logTemplate({activeUrl: value });
+		updateLogWithValue: function(value, event){
+			var log = $(urlProperties.logElClass);
+			var markup = urlProperties.logTemplate({activeUrl: value });
 
-				// Cancel any previous timeouts that may be around
-				window.clearTimeout(urlProperties.timeoutID);
+			// Cancel any previous timeouts that may be around
+			window.clearTimeout(urlProperties.timeoutID);
 
-				// Update value
-				// We're adding a class "hover" if the user is just hovering for a preview and not clicking
-				// We also build in a tiny delay on mouseout to prevent flickering when the mouse hovers over a row of buttons
-				if (event === 'mouseout') {
-					// timeout here
-					urlProperties.timeoutID = setTimeout(function(){
-						log.removeClass('hover');
-						log.html(markup);
-					}, 100);
-				} else if (event === 'mouseover') {
-					log.addClass('hover');
-					log.html(markup);
-				} else if (event === 'click'){
+			// Update value
+			// We're adding a class "hover" if the user is just hovering for a preview and not clicking
+			// We also build in a tiny delay on mouseout to prevent flickering when the mouse hovers over a row of buttons
+			if (event === 'mouseout') {
+				// timeout here
+				urlProperties.timeoutID = setTimeout(function(){
 					log.removeClass('hover');
 					log.html(markup);
-				}
-			},
-
-			onMouseOver: function(element){
-				// Preview the value of the button we're hovering over now
-				urlProperties.updateLogWithValue($(element).data('value'), 'mouseover');
-			},
-			onMouseOut: function(element){
-				urlProperties.updateLogWithValue($(element).data('value'), 'mouseout');
-			},
-
-			onSelect: function(element){
-				var category = $(element).attr('data-category');
-				var value = $(element).attr('data-value');
-
-				// Update viewModel and view
-				util.highlightSelected(element);
-				viewModel.set('urlProperties', category, value);
-				url.render();
-
-				if (category === 'environment') {
-					urlProperties.updateLogWithValue(value, 'click');
-				}
-			},
-
-			bind: function(){
-				urlProperties.$el.on('click', '[data-category="environment"], [data-category="protocol"]', function(e){
-					urlProperties.onSelect(this);
-					e.preventDefault;
-				});
-
-				urlProperties.$el.on('mouseover mouseout', '[data-category="environment"]', function(e){
-					switch(e.type){
-						case 'mouseover':
-							urlProperties.onMouseOver(this);
-							break;
-
-						case 'mouseout':
-						urlProperties.onMouseOut(this);
-							break;
-					}
-					e.preventDefault;
-				});
-			},
-
-			init: function(){
-				urlProperties.bind();
-
-				var settings = viewModel.getCategory('urlProperties');
-
-				_.each( settings, function(value, category){
-					var el = urlProperties.$el.find('.button[data-value="'+ value +'"]');
-
-					util.highlightSelected(el);
-				});
-
-				// Set log value on page load
-				urlProperties.updateLogWithValue(settings.environment, 'click');
+				}, 100);
+			} else if (event === 'mouseover') {
+				log.addClass('hover');
+				log.html(markup);
+			} else if (event === 'click'){
+				log.removeClass('hover');
+				log.html(markup);
 			}
-		};
-		var params = {
-			$el: $('ul#params'),
-			$items: $(),
-			deleteElClass: '.delete',
-			template: _.template('<li><label><%= category %></label> <input type="text" data-category="<%= category %>" value="<%= value %>" /> <div data-action="delete" class="button button-round choose delete"><i class="fa fa-times"></i></div></li>'),
+		},
 
-			renderAll: function(data, selected){
-				var items = $();
+		onMouseOver: function(element){
+			// Preview the value of the button we're hovering over now
+			urlProperties.updateLogWithValue($(element).data('value'), 'mouseover');
+		},
+		onMouseOut: function(element){
+			urlProperties.updateLogWithValue($(element).data('value'), 'mouseout');
+		},
 
-				// render all items and set values if provided
-				_.each( data, function(value, category, obj){
-					var finalValue = '';
-					var el;
+		onSelect: function(element){
+			var category = $(element).attr('data-category');
+			var value = $(element).attr('data-value');
 
-					// check if we have a preselected value or not
-					if ( _.has(selected, category) ) {
-						finalValue = selected[category];
-					}
+			// Update viewModel and view
+			util.highlightSelected(element);
+			viewModel.set('urlProperties', category, value);
+			url.render();
 
-					// append newly-prepared item to set
-					items = items.add(params.template({category: category, value: finalValue }));
-				});
+			if (category === 'environment') {
+				urlProperties.updateLogWithValue(value, 'click');
+			}
+		},
 
-				return items;
-			},
+		bind: function(){
+			urlProperties.$el.on('click', '[data-category="environment"], [data-category="protocol"]', function(e){
+				urlProperties.onSelect(this);
+				e.preventDefault;
+			});
 
-			onUpdate: function(element){
-				element = $(element);
+			urlProperties.$el.on('mouseover mouseout', '[data-category="environment"]', function(e){
+				switch(e.type){
+					case 'mouseover':
+						urlProperties.onMouseOver(this);
+						break;
 
-				var category = element.attr('data-category');
-				var value = element.val();
+					case 'mouseout':
+					urlProperties.onMouseOut(this);
+						break;
+				}
+				e.preventDefault;
+			});
+		},
 
-				// update selected data according to new value
-				viewModel.set('params', category, value);
+		init: function(){
+			urlProperties.bind();
 
-				url.render();
-			},
+			var settings = viewModel.getCategory('urlProperties');
 
-			bindDeleteButton: function(){
-				// Set up the delete button handler
-				params.$el.on('click', params.deleteElClass, function(e){
-					var currentParam = $(e.target).closest('li').find('input');
+			_.each( settings, function(value, category){
+				var el = urlProperties.$el.find('.button[data-value="'+ value +'"]');
 
-					// clear the associated input and regenerate the URL
-					if (currentParam.typeahead('val') !== ''){
-						currentParam.typeahead('val', '');
-						params.onUpdate(currentParam);
-					}
-				});
-			},
+				util.highlightSelected(el);
+			});
 
-			bindInputs: function( items ){
-				items.each(function(){
-					params.bindOneInput($(this).find('input'));
-				});
-			},
+			// Set log value on page load
+			urlProperties.updateLogWithValue(settings.environment, 'click');
+		}
+	};
 
-			bindOneInput: function( item ){
-				var data = allData.params[item.data('category')];
-				var handlers = {
-					onActive: function(){},
-					onChange: function(e){
-						var el = $(e.target);
-						params.onUpdate(el);
-						$(el).typeahead('close');
-					},
-					onClose: function(e){
-						var el = $(e.target);
-						el.removeClass('active').closest('ul').removeClass('autocompleteOpen')
-					},
-					onIdle: function(){},
-					onOpen: function(e){
-						var el = $(e.target);
-						el.addClass('active').closest('ul').addClass('autocompleteOpen')
-					},
-					onRender: function(){},
-					onSelect: function(e){
-						params.onUpdate(e.target);
-					}
-				};
 
-				autocomplete.bind(item, data, handlers);
-			},
+	var params = {
+		$el: $('ul#params'),
+		$items: $(),
+		deleteElClass: '.delete',
+		template: _.template('<li><label><%= category %></label> <input type="text" data-category="<%= category %>" value="<%= value %>" /> <div data-action="delete" class="button button-round choose delete"><i class="fa fa-times"></i></div></li>'),
 
-			init: function( data, defaults, queryString ){
-				var items;
-				var defaults = _.clone(defaults); // clone defaults so that we don't inadvertently corrupt it when merging it with queryString
+		renderAll: function(data, selected){
+			var items = $();
 
-				// Check query string for default values
-				// If exist, merge with defaults
-				if(queryString) {
-					queryString = $.deparam(queryString);
-					$.extend(defaults, queryString);
+			// render all items and set values if provided
+			_.each( data, function(value, category, obj){
+				var finalValue = '';
+				var el;
+
+				// check if we have a preselected value or not
+				if ( _.has(selected, category) ) {
+					finalValue = selected[category];
 				}
 
-				// render the param items
-				var items = params.renderAll(data, defaults);
+				// append newly-prepared item to set
+				items = items.add(params.template({category: category, value: finalValue }));
+			});
 
-				// bind handlers and attach to DOM
-				params.bindInputs( items );
-				params.bindDeleteButton();
-				util.appendHTML(items, params.$el);
-			}
-		};
+			params.bindInputs( items );
+			return items;
+		},
 
-		var url = {
-			$el: $('#generated_url'),
-			$goLink: $('.url-go'),
-			$copyLink: $('.url-copy'),
-			$exportLink: $('.url-export'),
+		onUpdate: function(element){
+			element = $(element);
 
-			generate: function(){
-				var generated = {};
-				generated.protocol = viewModel.getOne( 'urlProperties', 'protocol' );
-				generated.environment = viewModel.getOne( 'urlProperties', 'environment' );
-				generated.params = viewModel.getCategory( 'params' );
+			var category = element.attr('data-category');
+			var value = element.val();
 
-				return generated;
-			},
-			constructText: function(urlParts, pretty) {
-				var prettyText = [];
-				var protocol = urlParts.protocol;
-				var environment = urlParts.environment;
-				var params = urlParts.params;
+			// update selected data according to new value
+			viewModel.set('params', category, value);
 
-				// protocol
-				prettyText.push( util.wrapTag(protocol, 'part') );
-				prettyText.push( util.wrapTag('://', 'sep') );
+			url.render();
+		},
 
-				// environment
-				prettyText.push( util.wrapTag(environment, 'part') );
-				prettyText.push( util.wrapTag('?', 'sep') );
+		bindInputs: function( items ){
+			items.each(function(){
+				params.bindOneInput($(this).find('input'));
+			});
 
-				// query params
-				prettyText.push(url.serializeParams(params, pretty));
+			params.$el.on('click', params.deleteElClass, function(e){
+				var currentParam = $(e.target).closest('li').find('input');
 
-				return prettyText.join("");
-
-			},
-			serializeParams: function(params, pretty){
-				// Returns params either serialized as a valid query param string or wrapped in syntax spans for visual display
-				// pretty is a boolean value that when true, wraps the param parts in decorative spans
-				var serialized;
-				var part = '';
-
-				if (pretty) {
-					serialized = [];
-					for (var param in params){
-						part = util.wrapTag(param, 'param') + util.wrapTag('=', 'eq') + util.wrapTag(params[param], 'param');
-						serialized.push(part);
-					}
-					serialized = serialized.join(util.wrapTag('&', 'sep'));
-				} else {
-					serialized = $.param(params);
+				// clear the associated input and regenerate the URL
+				if (currentParam.typeahead('val') !== ''){
+					currentParam.typeahead('val', '');
+					params.onUpdate(currentParam);
 				}
-				return serialized;
-			},
-			render: _.debounce(function(){
-				var parts = url.generate();
-				var queryString = '?' + $.param(parts.params);
-				var href = parts.protocol + '://' + parts.environment + queryString;
-				var anchor = $('<a href="' + href + '">' + url.constructText(parts, true) + '</a>');
+			});
+		},
 
-				// ensure export url is clean - no query strings or hashes stowing a ride
-				var exportHref = document.location.protocol + '//' + document.location.host + document.location.pathname  + queryString;
+		bindOneInput: function( item ){
+			var data = model.params[item.data('category')];
+			var handlers = {
+				onActive: function(){},
+				onChange: function(e){
+					var el = $(e.target);
+					params.onUpdate(el);
+					$(el).typeahead('close');
+				},
+				onClose: function(e){
+					var el = $(e.target);
+					el.removeClass('active').closest('ul').removeClass('autocompleteOpen')
+				},
+				onIdle: function(){},
+				onOpen: function(e){
+					var el = $(e.target);
+					el.addClass('active').closest('ul').addClass('autocompleteOpen')
+				},
+				onRender: function(){},
+				onSelect: function(e){
+					params.onUpdate(e.target);
+				}
+			};
 
-				util.appendHTML(anchor, url.$el);
-				url.$copyLink.attr('data-clipboard-text', href);
-				url.$exportLink.attr('data-clipboard-text', exportHref );
-				url.$goLink.attr('href', href);
+			autocomplete.bind(item, data, handlers);
+		},
 
-			}, 200),
+		init: function(){
+			var items;
+			var localViewModel = viewModel.getCategory('params');
+			var localModel = model.params;
+			var queryString = $.deparam(document.location.search);
 
-			init: function(){
-				url.render();
+			// Update the viewModel with any data injected from the queryString
+			// Validate all values before updating viewModel
+			if(queryString && !queryString.redirect) {
+				_.each(queryString, function(value, key, obj){
+					if (_.has(localModel, key)){
+						viewModel.set('params', key, value);
+						delete obj[key];
+					} else if (key === 'environment') {
+						viewModel.set('urlProperties', 'environment', model.urlProperties.environment[value]);
+						delete obj[key];
+					} else if (key === 'protocol') {
+						viewModel.set('urlProperties', 'protocol', value);
+						delete obj[key];
+					}
+				});
+
+				queryString.redirect = 'true';
+
+				// Put back the query string without the stowed values - this is an interim solution to prevent stale query string state
+				// Will update this when ported to backbone
+				// TODO - update querystring each time a new value is selected.  Then the actual page url correctly represents state across the session.
+
+				document.location.search = $.param(queryString) ;
+
 			}
-		};
+
+			// Render the params based on the updated viewModel and append to DOM
+			var items = params.renderAll(model.params, viewModel.getCategory('params'));
+			util.appendHTML(items, params.$el);
+		}
+	};
+
+	var url = {
+		$el: $('#generated_url'),
+		$goLink: $('.url-go'),
+		$copyLink: $('.url-copy'),
+		$exportLink: $('.url-export'),
+
+		constructText: function(urlParts, pretty) {
+			var prettyText = [];
+			var protocol = urlParts.protocol;
+			var environment = urlParts.environment;
+			var params = urlParts.params;
+
+			// protocol
+			prettyText.push( util.wrapTag(protocol, 'part') );
+			prettyText.push( util.wrapTag('://', 'sep') );
+
+			// environment
+			prettyText.push( util.wrapTag(environment, 'part') );
+			prettyText.push( util.wrapTag('?', 'sep') );
+
+			// query params
+			prettyText.push(url.serializeParams(params, pretty));
+
+			return prettyText.join("");
+
+		},
+		serializeParams: function(params, pretty){
+			// Returns params either serialized as a valid query param string or wrapped in syntax spans for visual display
+			// pretty is a boolean value that when true, wraps the param parts in decorative spans
+			var serialized;
+			var part = '';
+
+			if (pretty) {
+				serialized = [];
+				for (var param in params){
+					part = util.wrapTag(param, 'param') + util.wrapTag('=', 'eq') + util.wrapTag(params[param], 'param');
+					serialized.push(part);
+				}
+				serialized = serialized.join(util.wrapTag('&', 'sep'));
+			} else {
+				serialized = $.param(params);
+			}
+			return serialized;
+		},
+		render: _.debounce(function(){
+			// TODO - this logic has gotten quite messy. Needs a rework!
+			// Probably going to be a rework of how the data is stored...
+			// Keeping this for now to focus on building out features, but will readdress when I port to backbone.
+			var params = viewModel.getCategory('params');
+			var protocol = viewModel.getOne('urlProperties', 'protocol');
+			var environment = viewModel.getOne( 'urlProperties', 'environment');
+			var queryString = '';
+			var urlProps = '';
+
+			queryString = $.param(viewModel.getCategory('params'));
+
+			urlProps += '&environment=';
+			urlProps += _.findKey(model.urlProperties.environment, function(value, key){ return value === environment;});
+			urlProps += '&protocol=';
+			urlProps += protocol;
+
+			var href = protocol + '://' + environment + '?' + queryString;
+			var anchor = $('<a href="' + href + '">' + url.constructText({params: params, environment: environment, protocol: protocol }, true) + '</a>');
+
+			// ensure export url is clean - no query strings or hashes stowing a ride
+			var exportHref = document.location.protocol + '//' + document.location.host + document.location.pathname  + '?' + queryString + urlProps;
+
+			util.appendHTML(anchor, url.$el);
+			url.$copyLink.attr('data-clipboard-text', href);
+			url.$exportLink.attr('data-clipboard-text', exportHref );
+			url.$goLink.attr('href', href);
+
+		}, 200),
+
+		init: function(){
+			url.render();
+		}
+	};
 
 
 	/* --------------------------------------
@@ -587,12 +623,7 @@ $(function(){
 	/* -------------------------------------- */
 
 	var bootstrap = function() {
-		var data = allData.params;
-		var defaults = viewModel.getCategory('params');
-		var queryString = document.location.search;
-
-		params.init(data, defaults, queryString);
-
+		params.init();
 		urlProperties.init();
 		url.init();
 		clipboard.init();
