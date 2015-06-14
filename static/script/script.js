@@ -508,28 +508,19 @@ $(function(){
 
 			// Update the viewModel with any data injected from the queryString
 			// Validate all values before updating viewModel
-			if(queryString && !queryString.redirect) {
+			if(queryString) {
 				_.each(queryString, function(value, key, obj){
 					if (_.has(localModel, key)){
 						viewModel.set('params', key, value);
-						delete obj[key];
 					} else if (key === 'environment') {
 						viewModel.set('urlProperties', 'environment', model.urlProperties.environment[value]);
-						delete obj[key];
 					} else if (key === 'protocol') {
 						viewModel.set('urlProperties', 'protocol', value);
-						delete obj[key];
 					}
 				});
 
-				queryString.redirect = 'true';
 
-				// Put back the query string without the stowed values - this is an interim solution to prevent stale query string state
-				// Will update this when ported to backbone
 				// TODO - update querystring each time a new value is selected.  Then the actual page url correctly represents state across the session.
-
-				document.location.search = $.param(queryString) ;
-
 			}
 
 			// Render the params based on the updated viewModel and append to DOM
