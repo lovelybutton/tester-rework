@@ -168,6 +168,8 @@ $(function(){
 						});
 					}, 1000);
 
+					document.location = e.data['text/plain'];
+
 					// in case we decide to use an <a>
 					e.preventDefault;
 				});
