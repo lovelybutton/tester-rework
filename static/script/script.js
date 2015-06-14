@@ -168,7 +168,11 @@ $(function(){
 						});
 					}, 1000);
 
-					document.location = e.data['text/plain'];
+					// Refresh url of page to reflect current state
+					// TODO - rework this
+					// Update - I don't like this at all. I'm commenting out for the time being.
+					// Rather find a sound solution later than a hacky one now
+					// document.location = e.data['text/plain'];
 
 					// in case we decide to use an <a>
 					e.preventDefault;
