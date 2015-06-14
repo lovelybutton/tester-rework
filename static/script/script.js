@@ -130,7 +130,7 @@ $(function(){
 	/* -------------------------------------- */
 
 	var clipboard = {
-		$alertElTemplate: _.template('<div class="alert"><%= alertLabel %> copied to your clipboard <i class="<%= iconClass %>"></i> </div>'),
+		$alertElTemplate: _.template('<div class="alert"><i class="<%= iconClass %>"></i> <%= alertLabel %> copied to your clipboard </div>'),
 		timerID: '',
 
 		init: function(){
@@ -146,20 +146,22 @@ $(function(){
 					// TODO - clean up this logic. Messy!
 
 					var element = $(e.target);
-					var parent = element.parent();
+					var alertContainer = element.siblings('.alert-container');
 					var alertElement = $(clipboard.$alertElTemplate({
 						alertLabel: element.data('alert-label'),
 						iconClass: element.find('i').attr('class')
 					}));
-					var prevAlert = parent.find('.' + alertElement.attr('class'));
+					var prevAlert = alertContainer.find('.' + alertElement.attr('class'));
 
 					// Clear out previous alerts if they are still running
 					window.clearTimeout(clipboard.timeoutID);
 					if(prevAlert.length){
-						prevAlert.fadeOut('fast');
+						prevAlert.fadeOut('fast', function(){
+							$(this).remove();
+						});
 					}
 					// Display an alert indicating success
-					parent.prepend(alertElement);
+					alertContainer.append(alertElement);
 
 					alertElement.fadeIn('fast');
 					clipboard.timeoutID = setTimeout(function(){
@@ -170,12 +172,11 @@ $(function(){
 
 					// Refresh url of page to reflect current state
 					// TODO - rework this
-					// Update - I don't like this at all. I'm commenting out for the time being.
-					// Rather find a sound solution later than a hacky one now
+					// Updat e-
 					// document.location = e.data['text/plain'];
 
 					// in case we decide to use an <a>
-					e.preventDefault;
+					// e.preventDefault;
 				});
 			});
 		}
