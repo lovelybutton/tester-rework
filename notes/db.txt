@@ -1,0 +1,37 @@
+// Set keys
+$users->set('bob', array('email' => 'bob@site.com', 'password' => '123456'));
+$users->set('joe', array('email' => 'joe@site.com', 'password' => 'test'));
+$users->set('mary', array('email' => 'mary@lamb.com', 'password' => 'test'));
+$settings->set('site_offline', 1);
+$settings->set('site_back', '3 days');
+ 
+// Retrieve keys
+$user = $users->get('bob');
+$offline = $settings->get('site_offline');
+
+// Retrieve all key names
+$keys = $users->getKeys(); // returns array('bob', 'joe', ...)
+ 
+foreach ($keys as $username) {
+    $user = $users->get($username);
+    echo $username.', your email is ' . $user['email'];
+    echo $username.', your password is ' . $user['password'];
+    echo '<br/>';
+}
+ 
+// Delete a key
+// $users->delete('joe');
+ 
+// Flush the database
+// $users->flush();
+
+
+/* methods:
+
+$db.set();
+$db->get()
+$db->getKeys()
+$db->delete();
+$db->flush();
+
+*/

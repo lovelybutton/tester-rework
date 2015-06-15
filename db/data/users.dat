@@ -1,0 +1,3 @@
+bob=a:2:{s:5:"email";s:12:"bob@site.com";s:8:"password";s:6:"123456";}
+joe=a:2:{s:5:"email";s:12:"joe@site.com";s:8:"password";s:4:"test";}
+mary=a:2:{s:5:"email";s:13:"mary@lamb.com";s:8:"password";s:4:"test";}
