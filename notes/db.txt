@@ -29,9 +29,14 @@ foreach ($keys as $username) {
 /* methods:
 
 $db.set();
-$db->get()
-$db->getKeys()
+$db->replace();
+
+$db->get();
+$db->getKeys();
+$db->getAll();
+
 $db->delete();
+
 $db->flush();
 
 */
